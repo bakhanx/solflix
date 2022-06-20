@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/solflix/static/css/main.e6c13ad2.css",
+    "main.js": "/solflix/static/js/main.09c67a83.js",
+    "static/js/787.a7b56173.chunk.js": "/solflix/static/js/787.a7b56173.chunk.js",
+    "index.html": "/solflix/index.html",
+    "main.e6c13ad2.css.map": "/solflix/static/css/main.e6c13ad2.css.map",
+    "main.09c67a83.js.map": "/solflix/static/js/main.09c67a83.js.map",
+    "787.a7b56173.chunk.js.map": "/solflix/static/js/787.a7b56173.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.09c67a83.js"
+  ]
+}
