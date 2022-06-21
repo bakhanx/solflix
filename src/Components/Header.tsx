@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { motion, useAnimation, useViewportScroll } from "framer-motion";
-import { Link, useMatch } from "react-router-dom";
+import { Link, PathMatch, useMatch } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
 
@@ -101,8 +101,8 @@ const navVariants = {
 
 const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false);
-  const homeMatch = useMatch("/");
-  const tvMatch = useMatch("/tv");
+  const homeMatch : PathMatch<string> | null = useMatch("/");
+  const tvMatch : PathMatch<string> | null = useMatch("/tv");
   const inputAnimation = useAnimation();
   const { scrollY } = useViewportScroll();
   const navAnimation = useAnimation();

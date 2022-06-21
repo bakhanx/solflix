@@ -3,7 +3,9 @@ import ReactDOM from "react-dom/client";
 import { RecoilRoot } from "recoil";
 import App from "./App";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
-import {theme} from "./theme";
+import { theme } from "./theme";
+import { QueryClient, QueryClientProvider } from "react-query";
+
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
@@ -27,6 +29,7 @@ time, mark, audio, video {
 	font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
+	box-sizing: border-box;
 	
 }
 /* HTML5 display-role reset for older browsers */
@@ -35,8 +38,12 @@ footer, header, hgroup, menu, nav, section {
 	display: block;
 }
 body {
-	line-height: 1;
-	box-sizing: border-box;
+	line-height: 1.2;
+	font-weight:300;
+	font-family: 'Source Sans Pro', sans-serif;
+	color:${props=>props.theme.white.darker};
+	background-color: black;
+	overflow-x: hidden; // hide scroll-X
 }
 ol, ul {
 	list-style: none;
@@ -59,13 +66,17 @@ a{
 }
 `;
 
+const client = new QueryClient();
+
 root.render(
   <React.StrictMode>
     <RecoilRoot>
-      <ThemeProvider theme={theme}>
-        <GlobalStyle/>
+      <QueryClientProvider client={client}>
+        <ThemeProvider theme={theme}>
+          <GlobalStyle />
           <App />
-      </ThemeProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
     </RecoilRoot>
   </React.StrictMode>
 );
