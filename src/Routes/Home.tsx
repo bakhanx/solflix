@@ -1,4 +1,5 @@
 import { AnimatePresence, motion, useViewportScroll } from "framer-motion";
+import { url } from "inspector";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { PathMatch, useMatch, useNavigate } from "react-router-dom";
@@ -36,11 +37,11 @@ const Banner = styled.div<{ bgPhoto: string }>`
   background-size: cover;
 `;
 const Title = styled.h2`
-  font-size: 68px;
+  font-size: 58px;
   margin-bottom: 20px;
 `;
 const Overview = styled.p`
-  font-size: 30px;
+  font-size: 24px;
   width: 50%;
 `;
 const Slider = styled.div`
@@ -97,15 +98,36 @@ const Overlay = styled(motion.div)`
   background-color: rgba(0, 0, 0, 0.5);
   opacity: 0;
 `;
-
-const BigMovie = styled(motion.div)<{scrolly:number}>`
+const BigMovie = styled(motion.div)<{ scrolly: number }>`
   position: absolute;
   width: 40vw;
   height: 80vh;
   left: 0;
   right: 0;
   margin: 0 auto;
-  top : ${props=>props.scrolly+100}px ;
+  top: ${(props) => props.scrolly + 100}px;
+  background-color: ${(props) => props.theme.black.lighter};
+  border-radius: 15px;
+  overflow: hidden;
+`;
+const BigCover = styled.div`
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  height: 400px;
+`;
+const BigContent = styled.div`
+  color: ${(props) => props.theme.white.lighter};
+  position: relative;
+  top: -80px;
+`;
+const BigTitle = styled.h3`
+  font-size: 36px;
+  padding: 20px;
+`;
+const BigOverview = styled.p`
+  font-size: 18px;
+  padding: 20px;
 `;
 
 // ================================================
@@ -140,14 +162,13 @@ const Home = () => {
   // ============ Hook ========================
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
+
   const { data, isLoading } = useQuery<IGetMovieResult>(
     ["movies", "nowPlaying"],
     getMovies
   );
   const bigMovieMatch = useMatch("/movies/:movieId");
   const { scrollY } = useViewportScroll();
-  console.log(bigMovieMatch);
-
   const navigate = useNavigate();
 
   // ============ Handle Function ============
@@ -166,6 +187,12 @@ const Home = () => {
     navigate(`/movies/${movieId}`);
   };
   const onOverlayClick = () => navigate("/");
+  const clickedMovie =
+    bigMovieMatch?.params.movieId &&
+    data?.results.find(
+      (movie) => String(movie.id) === bigMovieMatch.params.movieId
+    );
+  console.log(clickedMovie);
   // ============= Return ===========================
 
   return (
@@ -227,9 +254,23 @@ const Home = () => {
                 <BigMovie
                   layoutId={bigMovieMatch.params.movieId}
                   scrolly={scrollY.get()}
-                  // style={{ top: scrollY.get() + 100 }}
                 >
-                  hello
+                  {clickedMovie && (
+                    <>
+                      <BigCover
+                        style={{
+                          backgroundImage: `linear-gradient(to top, black, transparent),url(${makeImagePath(
+                            clickedMovie.backdrop_path,
+                            "w500"
+                          )})`,
+                        }}
+                      />
+                      <BigContent>
+                        <BigTitle>{clickedMovie.title}</BigTitle>
+                        <BigOverview>{clickedMovie.overview}</BigOverview>
+                      </BigContent>
+                    </>
+                  )}
                 </BigMovie>
               </>
             ) : (

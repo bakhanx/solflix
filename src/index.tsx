@@ -29,7 +29,7 @@ time, mark, audio, video {
 	font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
-	box-sizing: border-box;
+	box-sizing: border-box; // Necessary!
 	
 }
 /* HTML5 display-role reset for older browsers */

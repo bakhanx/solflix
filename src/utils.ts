@@ -4,4 +4,5 @@ export const makeImagePath = (id: string, format?: string) => {
 };
 
 
-// format: size,  ex) format: w500
+// format: size,  
+// ex) format: w500
