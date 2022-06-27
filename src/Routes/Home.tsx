@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useViewportScroll } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -174,17 +174,28 @@ const InfoVariants = {
 };
 
 // ================================================
+//            Initial
+// ================================================
+let totalMovies_now = 0;
+let totalMovies_popular = 0;
+let totalMovies_upcoming = 0;
+let maxIndex_now = 0;
+let maxIndex_popular = 0;
+let maxIndex_upcoming = 0;
+
+// ================================================
 //                Home
 // ================================================
 
 const Home = () => {
   // ============ Hook ========================
-  const categoryIndex = { NOW_PLAYING: 0, POPULAR: 0, UPCOMING: 0 };
+  const [index_now, setIndex_now] = useState(0);
+  const [index_popular, setIndex_popular] = useState(0);
+  const [index_upcoming, setIndex_upcoming] = useState(0);
 
-  const [index, setIndex] = useState(categoryIndex);
   const [leaving, setLeaving] = useState<boolean>(false);
 
-  const [category, setCategory] = useState<string>("");
+  const [category, setCategory] = useState<CATEGORY>(CATEGORY.NOW_PLAYING);
   const [clickedData, setClickedData] = useState<IGetMovieResult>();
 
   const { data: data_now_playing, isLoading: isLoading_now_playing } =
@@ -200,9 +211,50 @@ const Home = () => {
 
   // ============ Handle Function ============
 
-  const clickedCategory = (cate: string) => {
+  const toggleLeaving = () => setLeaving((prev) => !prev);
+
+  // Increase
+  if (data_now_playing) {
+    totalMovies_now = data_now_playing.results.length - 1;
+    maxIndex_now = Math.floor(totalMovies_now / OFFSET) - 1;
+  }
+
+  if (data_popular) {
+    totalMovies_popular = data_popular.results.length - 1;
+    maxIndex_popular = Math.floor(totalMovies_popular / OFFSET) - 1;
+  }
+
+  if (data_upcoming) {
+    totalMovies_upcoming = data_upcoming.results.length - 1;
+    maxIndex_upcoming = Math.floor(totalMovies_upcoming / OFFSET) - 1;
+  }
+
+  const increaseIndex = (cate: CATEGORY) => {
+    //연속 버튼 방지
+    if (leaving) return;
+    toggleLeaving();
+
+    switch (cate) {
+      case CATEGORY.NOW_PLAYING:
+        setIndex_now((prev) => (index_now === maxIndex_now ? 0 : prev + 1));
+        break;
+      case CATEGORY.POPULAR:
+        setIndex_popular((prev) =>
+          index_popular === maxIndex_popular ? 0 : prev + 1
+        );
+        break;
+      case CATEGORY.UPCOMING:
+        setIndex_upcoming((prev) =>
+          index_upcoming === maxIndex_upcoming ? 0 : prev + 1
+        );
+        break;
+    }
+  };
+
+  // Common
+  const onBoxClicked = (movieId: number | string, cate: CATEGORY) => {
     setCategory(cate);
-    console.log("cllicked cate", category);
+
     switch (cate) {
       case CATEGORY.NOW_PLAYING:
         setClickedData(data_now_playing);
@@ -214,35 +266,6 @@ const Home = () => {
         setClickedData(data_upcoming);
         break;
     }
-  };
-
-  // Increase
-  const increaseIndex = (cate: string) => {
-
-    clickedCategory(cate);
-    console.log("increase cate", category);
-    if (clickedData) {
-      const totalMovies = clickedData.results.length - 1;
-      const maxIndex = Math.floor(totalMovies / OFFSET) - 1;
-
-      //연속 버튼 방지
-      if (leaving) return;
-      toggleLeaving();
-
-      const newIndex = { ...index };
-      newIndex.NOW_PLAYING === maxIndex
-        ? (newIndex.NOW_PLAYING = 0)
-        : newIndex.NOW_PLAYING += 1;
-      setIndex(newIndex);
-    }
-    console.log(index.NOW_PLAYING);
-  };
-  
-  const toggleLeaving = () => setLeaving((prev) => !prev);
-
-  // Common
-  const onBoxClicked = (movieId: number | string, category: string) => {
-    clickedCategory(category);
     navigate(`/movies/${movieId}`);
   };
 
@@ -254,9 +277,7 @@ const Home = () => {
       (movie) => String(movie.id) === bigMovieMatch.params.movieId
     );
 
-  console.log("clicekd", clickedMovie);
   // ============= Return ===========================
-  console.log(data_now_playing);
   return (
     <Wrapper>
       {isLoading_now_playing ? (
@@ -275,12 +296,12 @@ const Home = () => {
           {/* Now Playing */}
           <Slider>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-              <Filter>Now Playing</Filter>
+              <Filter key="key_now_playing">Now Playing</Filter>
               <NextBtn onClick={() => increaseIndex(CATEGORY.NOW_PLAYING)}>
                 next
               </NextBtn>
               <Row
-                key={index.NOW_PLAYING}
+                key={index_now}
                 variants={RowVariants}
                 initial="hidden"
                 animate="visible"
@@ -289,18 +310,15 @@ const Home = () => {
               >
                 {data_now_playing?.results
                   .slice(1)
-                  .slice(
-                    index.NOW_PLAYING * OFFSET,
-                    index.NOW_PLAYING * OFFSET + OFFSET
-                  )
+                  .slice(index_now * OFFSET, index_now * OFFSET + OFFSET)
                   .map((movie) => (
                     <Box
+                      key={movie.id}
                       layoutId={CATEGORY.NOW_PLAYING + "_" + movie.id}
                       initial="normal"
                       whileHover="hover"
                       variants={BoxVariants}
                       transition={{ type: "tween" }}
-                      key={movie.id}
                       bg_photo={makeImagePath(
                         movie.backdrop_path || "",
                         "w500"
@@ -322,7 +340,7 @@ const Home = () => {
           {/* Popular */}
           <Slider>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-              <Filter>Popular</Filter>
+              <Filter key="key_popular">Popular</Filter>
               <NextBtn
                 id="popular"
                 onClick={() => increaseIndex(CATEGORY.POPULAR)}
@@ -330,7 +348,7 @@ const Home = () => {
                 next
               </NextBtn>
               <Row
-                key={index + "popular"}
+                key={index_popular}
                 variants={RowVariants}
                 initial="hidden"
                 animate="visible"
@@ -340,8 +358,8 @@ const Home = () => {
                 {data_popular?.results
                   .slice(1)
                   .slice(
-                    index.POPULAR * OFFSET,
-                    index.POPULAR * OFFSET + OFFSET
+                    index_popular * OFFSET,
+                    index_popular * OFFSET + OFFSET
                   )
                   .map((movie) => (
                     <Box
@@ -372,7 +390,7 @@ const Home = () => {
           {/* Upcoming */}
           <Slider>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
-              <Filter>Upcoming</Filter>
+              <Filter key="key_upcoming">Upcoming</Filter>
               <NextBtn
                 id="upcoming"
                 onClick={() => increaseIndex(CATEGORY.UPCOMING)}
@@ -380,7 +398,7 @@ const Home = () => {
                 next
               </NextBtn>
               <Row
-                key={index + "upcoming"}
+                key={index_upcoming}
                 variants={RowVariants}
                 initial="hidden"
                 animate="visible"
@@ -390,8 +408,8 @@ const Home = () => {
                 {data_upcoming?.results
                   .slice(1)
                   .slice(
-                    index.UPCOMING * OFFSET,
-                    index.UPCOMING * OFFSET + OFFSET
+                    index_upcoming * OFFSET,
+                    index_upcoming * OFFSET + OFFSET
                   )
                   .map((movie) => (
                     <Box
