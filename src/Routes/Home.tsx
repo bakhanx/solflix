@@ -7,7 +7,7 @@ import {
   getMovies_now_playing,
   getMovies_popular,
   getMovies_upcoming,
-  IGetMovieResult,
+  iGetMovieResult,
 } from "../api";
 import { makeImagePath } from "../utils";
 
@@ -54,7 +54,7 @@ const Title = styled.h2`
   margin-bottom: 20px;
 `;
 const Overview = styled.p`
-  font-size: 24px;
+  font-size: 28px;
   width: 50%;
 `;
 const Slider = styled.div`
@@ -147,7 +147,19 @@ const BigOverview = styled.p`
   font-size: 18px;
   padding: 20px;
 `;
+
+const BtnWrapper = styled.div`
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 200px;
+  width: 100%;
+  z-index: 1000;
+`;
+
 const NextBtn = styled.button``;
+const PrevBtn = styled.button``;
 // ================================================
 //            Variannts
 // ================================================
@@ -162,7 +174,7 @@ const BoxVariants = {
   },
 };
 const RowVariants = {
-  hidden: { x: window.outerWidth - 5 },
+  hidden: { x: +window.outerWidth - 5 },
   visible: { x: 0 },
   exit: { x: -window.outerWidth + 5 },
 };
@@ -179,9 +191,12 @@ const InfoVariants = {
 let totalMovies_now = 0;
 let totalMovies_popular = 0;
 let totalMovies_upcoming = 0;
-let maxIndex_now = 0;
-let maxIndex_popular = 0;
-let maxIndex_upcoming = 0;
+let maxIndex_now = 2;
+let maxIndex_popular = 2;
+let maxIndex_upcoming = 2;
+let minIndex_now = 0;
+let minIndex_popular = 0;
+let minIndex_upcoming = 0;
 
 // ================================================
 //                Home
@@ -193,17 +208,18 @@ const Home = () => {
   const [index_popular, setIndex_popular] = useState(0);
   const [index_upcoming, setIndex_upcoming] = useState(0);
 
+  const [isIncrease, setIsIncrease] = useState<boolean>(false);
   const [leaving, setLeaving] = useState<boolean>(false);
 
   const [category, setCategory] = useState<CATEGORY>(CATEGORY.NOW_PLAYING);
-  const [clickedData, setClickedData] = useState<IGetMovieResult>();
+  const [clickedData, setClickedData] = useState<iGetMovieResult>();
 
   const { data: data_now_playing, isLoading: isLoading_now_playing } =
-    useQuery<IGetMovieResult>(["movies", "nowPlaying"], getMovies_now_playing);
+    useQuery<iGetMovieResult>(["movies", "nowPlaying"], getMovies_now_playing);
   const { data: data_popular, isLoading: isLoading_data_popular } =
-    useQuery<IGetMovieResult>(["movies", "popular"], getMovies_popular);
+    useQuery<iGetMovieResult>(["movies", "popular"], getMovies_popular);
   const { data: data_upcoming, isLoading: isLoading_data_upcoming } =
-    useQuery<IGetMovieResult>(["movies", "upcoming"], getMovies_upcoming);
+    useQuery<iGetMovieResult>(["movies", "upcoming"], getMovies_upcoming);
 
   const bigMovieMatch = useMatch("/movies/:movieId");
   const { scrollY } = useViewportScroll();
@@ -230,10 +246,13 @@ const Home = () => {
   }
 
   const increaseIndex = (cate: CATEGORY) => {
+    setIsIncrease(true);
     //연속 버튼 방지
     if (leaving) return;
     toggleLeaving();
-
+    console.log(index_now);
+    console.log(maxIndex_now);
+    console.log(isIncrease);
     switch (cate) {
       case CATEGORY.NOW_PLAYING:
         setIndex_now((prev) => (index_now === maxIndex_now ? 0 : prev + 1));
@@ -246,6 +265,31 @@ const Home = () => {
       case CATEGORY.UPCOMING:
         setIndex_upcoming((prev) =>
           index_upcoming === maxIndex_upcoming ? 0 : prev + 1
+        );
+        break;
+    }
+  };
+  const decreaseIndex = (cate: CATEGORY) => {
+    setIsIncrease((prev)=> false);
+    console.log(index_now);
+    console.log(minIndex_now);
+    console.log(isIncrease);
+    //연속 버튼 방지
+    if (leaving) return;
+    toggleLeaving();
+
+    switch (cate) {
+      case CATEGORY.NOW_PLAYING:
+        setIndex_now((prev) => (index_now === minIndex_now ? 2 : prev - 1));
+        break;
+      case CATEGORY.POPULAR:
+        setIndex_popular((prev) =>
+          index_popular === minIndex_popular ? 2 : prev - 1
+        );
+        break;
+      case CATEGORY.UPCOMING:
+        setIndex_upcoming((prev) =>
+          index_upcoming === minIndex_upcoming ? 2 : prev - 1
         );
         break;
     }
@@ -277,6 +321,7 @@ const Home = () => {
       (movie) => String(movie.id) === bigMovieMatch.params.movieId
     );
 
+
   // ============= Return ===========================
   return (
     <Wrapper>
@@ -297,15 +342,20 @@ const Home = () => {
           <Slider>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Filter key="key_now_playing">Now Playing</Filter>
-              <NextBtn onClick={() => increaseIndex(CATEGORY.NOW_PLAYING)}>
-                next
-              </NextBtn>
+              <BtnWrapper>
+                <PrevBtn onClick={() => decreaseIndex(CATEGORY.NOW_PLAYING)}>
+                  prev
+                </PrevBtn>
+                <NextBtn onClick={() => increaseIndex(CATEGORY.NOW_PLAYING)}>
+                  next
+                </NextBtn>
+              </BtnWrapper>
               <Row
                 key={index_now}
                 variants={RowVariants}
-                initial="hidden"
+                initial={isIncrease ? "hidden" : "exit"}
                 animate="visible"
-                exit="exit"
+                exit={isIncrease ? "exit" : "hidden"}
                 transition={{ type: "tween", duration: 2 }}
               >
                 {data_now_playing?.results
@@ -341,18 +391,23 @@ const Home = () => {
           <Slider>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Filter key="key_popular">Popular</Filter>
-              <NextBtn
-                id="popular"
-                onClick={() => increaseIndex(CATEGORY.POPULAR)}
-              >
-                next
-              </NextBtn>
+              <BtnWrapper>
+                <PrevBtn onClick={() => decreaseIndex(CATEGORY.POPULAR)}>
+                  prev
+                </PrevBtn>
+                <NextBtn
+                  id="popular"
+                  onClick={() => increaseIndex(CATEGORY.POPULAR)}
+                >
+                  next
+                </NextBtn>
+              </BtnWrapper>
               <Row
                 key={index_popular}
                 variants={RowVariants}
-                initial="hidden"
+                initial={isIncrease ? "hidden" : "exit"}
                 animate="visible"
-                exit="exit"
+                exit={isIncrease ? "exit" : "hidden"}
                 transition={{ type: "tween", duration: 2 }}
               >
                 {data_popular?.results
@@ -391,18 +446,23 @@ const Home = () => {
           <Slider>
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Filter key="key_upcoming">Upcoming</Filter>
-              <NextBtn
-                id="upcoming"
-                onClick={() => increaseIndex(CATEGORY.UPCOMING)}
-              >
-                next
-              </NextBtn>
+              <BtnWrapper>
+                <PrevBtn onClick={() => decreaseIndex(CATEGORY.UPCOMING)}>
+                  prev
+                </PrevBtn>
+                <NextBtn
+                  id="upcoming"
+                  onClick={() => increaseIndex(CATEGORY.UPCOMING)}
+                >
+                  next
+                </NextBtn>
+              </BtnWrapper>
               <Row
                 key={index_upcoming}
                 variants={RowVariants}
-                initial="hidden"
+                initial={isIncrease ? "hidden" : "exit"}
                 animate="visible"
-                exit="exit"
+                exit={isIncrease ? "exit" : "hidden"}
                 transition={{ type: "tween", duration: 2 }}
               >
                 {data_upcoming?.results
