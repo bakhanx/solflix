@@ -9,7 +9,7 @@ import {
   getMovies_upcoming,
   iGetMovieResult,
 } from "../api";
-import { makeImagePath } from "../utils";
+import { makeImagePath_backdrop } from "../utils";
 
 // ================================================
 //               Constant
@@ -155,12 +155,23 @@ const BtnWrapper = styled.div`
   justify-content: space-between;
   height: 200px;
   width: 100%;
-  z-index: 1000;
+  /* z-index: 1000; */
 `;
 
-const NextBtn = styled.button``;
-const PrevBtn = styled.button``;
-// ================================================
+const SlideBtn = styled.button`
+  font-size: 30px;
+  height: 80%;
+  z-index: 1000;
+  color:#dfdfdfdc;
+  background-color: rgba(0,0,0,0.1);
+  border-style: none;
+  cursor: pointer;
+  &:hover{
+    color:white;
+    scale:1.5;
+  }
+`;
+// ======================================
 //            Variannts
 // ================================================
 const BoxVariants = {
@@ -270,7 +281,7 @@ const Home = () => {
     }
   };
   const decreaseIndex = (cate: CATEGORY) => {
-    setIsIncrease((prev)=> false);
+    setIsIncrease((prev) => false);
     console.log(index_now);
     console.log(minIndex_now);
     console.log(isIncrease);
@@ -321,7 +332,6 @@ const Home = () => {
       (movie) => String(movie.id) === bigMovieMatch.params.movieId
     );
 
-
   // ============= Return ===========================
   return (
     <Wrapper>
@@ -330,7 +340,7 @@ const Home = () => {
       ) : (
         <>
           <Banner
-            bgPhoto={makeImagePath(
+            bgPhoto={makeImagePath_backdrop(
               data_now_playing?.results[0].backdrop_path || ""
             )}
           >
@@ -343,12 +353,12 @@ const Home = () => {
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Filter key="key_now_playing">Now Playing</Filter>
               <BtnWrapper>
-                <PrevBtn onClick={() => decreaseIndex(CATEGORY.NOW_PLAYING)}>
-                  prev
-                </PrevBtn>
-                <NextBtn onClick={() => increaseIndex(CATEGORY.NOW_PLAYING)}>
-                  next
-                </NextBtn>
+                <SlideBtn onClick={() => decreaseIndex(CATEGORY.NOW_PLAYING)}>
+                  {`<`}
+                </SlideBtn>
+                <SlideBtn onClick={() => increaseIndex(CATEGORY.NOW_PLAYING)}>
+                  {`>`}
+                </SlideBtn>
               </BtnWrapper>
               <Row
                 key={index_now}
@@ -369,7 +379,7 @@ const Home = () => {
                       whileHover="hover"
                       variants={BoxVariants}
                       transition={{ type: "tween" }}
-                      bg_photo={makeImagePath(
+                      bg_photo={makeImagePath_backdrop(
                         movie.backdrop_path || "",
                         "w500"
                       )}
@@ -392,15 +402,15 @@ const Home = () => {
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Filter key="key_popular">Popular</Filter>
               <BtnWrapper>
-                <PrevBtn onClick={() => decreaseIndex(CATEGORY.POPULAR)}>
-                  prev
-                </PrevBtn>
-                <NextBtn
+                <SlideBtn onClick={() => decreaseIndex(CATEGORY.POPULAR)}>
+                {`<`}
+                </SlideBtn>
+                <SlideBtn
                   id="popular"
                   onClick={() => increaseIndex(CATEGORY.POPULAR)}
                 >
-                  next
-                </NextBtn>
+                  {`>`}
+                </SlideBtn>
               </BtnWrapper>
               <Row
                 key={index_popular}
@@ -424,7 +434,7 @@ const Home = () => {
                       variants={BoxVariants}
                       transition={{ type: "tween" }}
                       key={movie.id + "p"}
-                      bg_photo={makeImagePath(
+                      bg_photo={makeImagePath_backdrop(
                         movie.backdrop_path || "",
                         "w500"
                       )}
@@ -447,15 +457,15 @@ const Home = () => {
             <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
               <Filter key="key_upcoming">Upcoming</Filter>
               <BtnWrapper>
-                <PrevBtn onClick={() => decreaseIndex(CATEGORY.UPCOMING)}>
-                  prev
-                </PrevBtn>
-                <NextBtn
+                <SlideBtn onClick={() => decreaseIndex(CATEGORY.UPCOMING)}>
+                {`<`}
+                </SlideBtn>
+                <SlideBtn
                   id="upcoming"
                   onClick={() => increaseIndex(CATEGORY.UPCOMING)}
                 >
-                  next
-                </NextBtn>
+                  {`>`}
+                </SlideBtn>
               </BtnWrapper>
               <Row
                 key={index_upcoming}
@@ -479,7 +489,7 @@ const Home = () => {
                       variants={BoxVariants}
                       transition={{ type: "tween" }}
                       key={movie.id + "u"}
-                      bg_photo={makeImagePath(
+                      bg_photo={makeImagePath_backdrop(
                         movie.backdrop_path || "",
                         "w500"
                       )}
@@ -514,7 +524,7 @@ const Home = () => {
                     <>
                       <BigCover
                         style={{
-                          backgroundImage: `linear-gradient(to top, black, transparent),url(${makeImagePath(
+                          backgroundImage: `linear-gradient(to top, black, transparent),url(${makeImagePath_backdrop(
                             clickedMovie.backdrop_path,
                             "w500"
                           )})`,

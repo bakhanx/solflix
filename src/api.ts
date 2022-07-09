@@ -58,3 +58,15 @@ export const getTv_on_the_air = () => {
     (response) => response.json()
   );
 };
+
+export const getTv_popular = () => {
+  return fetch(`${BASE_PATH}/tv/popular?api_key=${API_KEY}`).then(
+    (response) => response.json()
+  );
+};
+
+export const getTv_top_rate = () =>{
+  return fetch(`${BASE_PATH}/tv/top_rated?api_key=${API_KEY}`).then(
+    (response) => response.json()
+  );
+}
