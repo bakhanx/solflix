@@ -1,128 +1,79 @@
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, useViewportScroll } from "framer-motion";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import {
+  getTv_airing_today,
+  getTv_latest,
   getTv_on_the_air,
   getTv_popular,
-  getTv_top_rate,
+  getTv_top_rated,
   iGetTvResult,
+  iTv,
 } from "../api";
-import { makeImagePath_backdrop, makeImagePath_poster } from "../utils";
+import { makeImagePath } from "../utils";
+import {
+  Banner,
+  BigContent,
+  BigCover,
+  BigMovie,
+  BigOverview,
+  BigTitle,
+  Box,
+  BtnWrapper,
+  Filter,
+  Loader,
+  Overlay,
+  Overview,
+  Row,
+  SlideBtn,
+  Slider,
+  Title,
+  Wrapper,
+} from "./Home";
 
 // ================================================
 //                Const
 // ================================================
 const OFFSET = 6;
-
+const enum CATEGORY {
+  "AIRING_TODAY" = "AIRING_TODAY",
+  "POPULAR" = "POPULAR",
+  "TOP_RATED" = "TOP_RATED",
+  "ON_THE_AIR" = "ON_THE_AIR",
+  "LATEST" = "LATEST",
+}
 // ================================================
 //                Component
 // ================================================
-
-const Wrapper = styled.div`
-  background-color: black;
-`;
-const Loader = styled.div`
-  height: 20vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-const Banner = styled.div<{ bgPhoto: string }>`
-  height: 100vh;
-  background-image: linear-gradient(
-      rgba(0, 0, 0, 1),
-      rgba(0, 0, 0, 0),
-      rgba(0, 0, 0, 1)
-    ),
-    url(${(props) => props.bgPhoto});
-  background-size: cover;
-  padding: 60px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-`;
-const Title = styled.div`
-  font-size: 58px;
-  margin-bottom: 20px;
-`;
-const Overview = styled.div`
-  font-size: 28px;
-  width: 50%;
-`;
-
-const Slider = styled.div`
-  width: 95%;
-  margin: auto;
-  position: relative;
-  top: -150px;
-  margin-bottom: 220px;
-`;
-
-const Row = styled.div`
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 5px;
-  position: absolute;
-`;
-const Box = styled(motion.div)<{ bgPhoto: string }>`
-  height: 200px;
-  background-color: white;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
-    url(${(props) => props.bgPhoto});
-  background-size: cover;
-  background-position: center;
-  font-size: 20px;
-  &:hover {
-    background-image: url(${(props) => props.bgPhoto});
-    scale: 1.3;
-    top: 45px;
-    color: red;
-  }
-`;
-
-const BtnWrapper = styled.div`
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 200px;
-  width: 100%;
-`;
-const SlideBtn = styled.button`
-  font-size: 30px;
-  height: 80%;
-  z-index: 1000;
-  color: #dfdfdfdc;
-  background-color: rgba(0, 0, 0, 0.1);
-  border-style: none;
-  cursor: pointer;
-  &:hover {
-    color: white;
-    scale: 1.5;
-  }
-`;
-const Filter = styled.div`
-  font-size: 36px;
-  padding-bottom: 15px;
-`;
-
 
 // ================================================
 //                TV
 // ================================================
 
 const Tv = () => {
-  const { data: data_on_the_air, isLoading: isLoading_on_the_air } =
-    useQuery<iGetTvResult>(["tv", "on_the_air"], getTv_on_the_air);
+  const [index, setIndex] = useState([0, 0, 0, 0, 0]);
+  const [category, setCategory] = useState<CATEGORY>(CATEGORY.ON_THE_AIR);
+
+  const [leaving, setLeaving] = useState<boolean>(false);
+  const [clickedData, setClickedData] = useState<iGetTvResult | iTv>();
+
+  const { data: data_airing_today, isLoading: isLoading_airing_today } =
+    useQuery<iGetTvResult>(["tv", "airing_today"], getTv_airing_today);
   const { data: data_popular, isLoading: isLoading_popular } =
     useQuery<iGetTvResult>(["tv", "popular"], getTv_popular);
-  const { data: data_top_rate, isLoading: isLoading_top_rate } =
-    useQuery<iGetTvResult>(["tv", "top_rate"], getTv_top_rate);
 
-  const [index, setIndex] = useState([0, 0, 0]);
+  const { data: data_top_rated, isLoading: isLoading_top_rated } =
+    useQuery<iGetTvResult>(["tv", "top_rate"], getTv_top_rated);
+
+  const { data: data_latest, isLoading: isLoading_latest } = useQuery<iTv>(
+    ["tv", "latest"],
+    getTv_latest
+  );
+
+  const { data: data_on_the_air, isLoading: isLoading_on_the_air } =
+    useQuery<iGetTvResult>(["tv", "on_the_air"], getTv_on_the_air);
 
   const bigTvMatch = useMatch("/tv/:tvId");
 
@@ -139,9 +90,42 @@ const Tv = () => {
 
   const navigate = useNavigate();
 
-  const onBoxedClicked = (movieId: number) => {
-    navigate(`/videos/${movieId}`);
+  const onOverlayClick = () => navigate("/tv");
+
+  const onBoxClicked = (tvId: number | string, cate: CATEGORY) => {
+    setCategory(cate);
+
+    switch (cate) {
+      case CATEGORY.AIRING_TODAY:
+        setClickedData(data_airing_today);
+        break;
+      case CATEGORY.POPULAR:
+        setClickedData(data_popular);
+        break;
+      case CATEGORY.TOP_RATED:
+        setClickedData(data_top_rated);
+        break;
+      case CATEGORY.ON_THE_AIR:
+        setClickedData(data_on_the_air);
+        break;
+      case CATEGORY.LATEST:
+        setClickedData(data_latest);
+        break;
+    }
+    navigate(`/tv/${tvId}`);
   };
+
+  const { scrollY } = useViewportScroll();
+
+  const toggleLeaving = () => setLeaving((prev) => !prev);
+
+  const clickedTv =
+    bigTvMatch?.params.tvId &&
+    (clickedData?.results
+      ? clickedData.results.find(
+          (tv) => String(tv.id) === bigTvMatch.params.tvId
+        )
+      : clickedData);
 
   return (
     <Wrapper>
@@ -150,36 +134,39 @@ const Tv = () => {
       ) : (
         <>
           <Banner
-            bgPhoto={makeImagePath_backdrop(
-              data_on_the_air?.results[0].backdrop_path || ""
+            bgphoto={makeImagePath(
+              data_on_the_air?.results[0].backdrop_path,
+              data_on_the_air?.results[0].poster_path
             )}
           >
             <Title>{data_on_the_air?.results[0].name}</Title>
             <Overview>{data_on_the_air?.results[0].overview}</Overview>
           </Banner>
 
-          {/* On The Air */}
+          {/* Airing Today */}
           <Slider>
+            <Filter>Airing Today</Filter>
+            <BtnWrapper>
+              <SlideBtn onClick={() => DecreaseIndex(0)}>{`<`}</SlideBtn>
+              <SlideBtn onClick={() => IncreaseIndex(0)}>{`>`}</SlideBtn>
+            </BtnWrapper>
             <AnimatePresence>
-              <Filter key="key_on_the_air">On The Air</Filter>
-              <BtnWrapper>
-                <SlideBtn onClick={() => DecreaseIndex(0)}>{`<`}</SlideBtn>
-                <SlideBtn onClick={() => IncreaseIndex(0)}>{`>`}</SlideBtn>
-              </BtnWrapper>
-              <Row>
-                {data_on_the_air?.results
+              <Row key="key_aring_today">
+                {data_airing_today?.results
                   .slice(1)
                   .slice(index[0] * OFFSET, index[0] * OFFSET + OFFSET)
                   .map((data) => (
                     <Box
-                      layoutId={`ontheair-${data.id}`}
-                      onClick={() => onBoxedClicked(data.id)}
-                      key={data.id}
-                      bgPhoto={
-                        data.backdrop_path
-                          ? makeImagePath_backdrop(data.backdrop_path, "w500")
-                          : makeImagePath_poster(data.poster_path)
+                      layoutId={CATEGORY.AIRING_TODAY + "_" + data.id}
+                      key={`airingtoday-${data.id}`}
+                      onClick={() =>
+                        onBoxClicked(data.id, CATEGORY.AIRING_TODAY)
                       }
+                      bg_photo={makeImagePath(
+                        data.backdrop_path,
+                        data.poster_path,
+                        "w500"
+                      )}
                     >
                       {data.name}
                     </Box>
@@ -190,48 +177,53 @@ const Tv = () => {
 
           {/* Popular */}
           <Slider>
-            <Filter key="key_popular">Popular</Filter>
+            <Filter>Popular</Filter>
             <BtnWrapper>
               <SlideBtn onClick={() => DecreaseIndex(1)}>{`<`}</SlideBtn>
               <SlideBtn onClick={() => IncreaseIndex(1)}>{`>`}</SlideBtn>
             </BtnWrapper>
-            <Row>
+            <Row key="key_popular">
               {data_popular?.results
                 .slice(1)
                 .slice(index[1] * OFFSET, index[1] * OFFSET + OFFSET)
                 .map((data) => (
                   <Box
-                    key={data.id}
-                    bgPhoto={
-                      data.backdrop_path
-                        ? makeImagePath_backdrop(data.backdrop_path, "w500")
-                        : makeImagePath_poster(data.poster_path, "w500")
-                    }
+                    layoutId={CATEGORY.POPULAR + "_" + data.id}
+                    key={`popular-${data.id}`}
+                    onClick={() => onBoxClicked(data.id, CATEGORY.POPULAR)}
+                    bg_photo={makeImagePath(
+                      data.backdrop_path,
+                      data.poster_path,
+                      "w500"
+                    )}
                   >
                     {data.name}
                   </Box>
                 ))}
             </Row>
           </Slider>
+
           {/* Top Rate */}
           <Slider>
-            <Filter key="key_top_rate">Top Rate</Filter>
+            <Filter>Top Rated</Filter>
             <BtnWrapper>
               <SlideBtn onClick={() => DecreaseIndex(2)}>{`<`}</SlideBtn>
               <SlideBtn onClick={() => IncreaseIndex(2)}>{`>`}</SlideBtn>
             </BtnWrapper>
-            <Row>
-              {data_top_rate?.results
+            <Row key="key_top_rated">
+              {data_top_rated?.results
                 .slice(1)
                 .slice(index[2] * OFFSET, index[2] * OFFSET + OFFSET)
                 .map((data) => (
                   <Box
-                    key={data.id}
-                    bgPhoto={
-                      data.backdrop_path
-                        ? makeImagePath_backdrop(data.backdrop_path, "w500")
-                        : makeImagePath_poster(data.poster_path, "w500")
-                    }
+                    layoutId={CATEGORY.TOP_RATED + "_" + data.id}
+                    key={`toprated-${data.id}`}
+                    onClick={() => onBoxClicked(data.id, CATEGORY.TOP_RATED)}
+                    bg_photo={makeImagePath(
+                      data.backdrop_path,
+                      data.poster_path,
+                      "w500"
+                    )}
                   >
                     {data.name}
                   </Box>
@@ -239,11 +231,102 @@ const Tv = () => {
             </Row>
           </Slider>
 
+          {/* On The Air */}
+          <Slider>
+            <Filter>On The Air</Filter>
+            <BtnWrapper>
+              <SlideBtn onClick={() => DecreaseIndex(0)}>{`<`}</SlideBtn>
+              <SlideBtn onClick={() => IncreaseIndex(0)}>{`>`}</SlideBtn>
+            </BtnWrapper>
+            <AnimatePresence>
+              <Row key="key_on_the_air">
+                {data_on_the_air?.results
+                  .slice(1)
+                  .slice(index[3] * OFFSET, index[3] * OFFSET + OFFSET)
+                  .map((data) => (
+                    <Box
+                      layoutId={CATEGORY.ON_THE_AIR + "_" + data.id}
+                      key={`ontheair-${data.id}`}
+                      onClick={() => onBoxClicked(data.id, CATEGORY.ON_THE_AIR)}
+                      bg_photo={makeImagePath(
+                        data.backdrop_path,
+                        data.poster_path,
+                        "w500"
+                      )}
+                    >
+                      {data.name}
+                    </Box>
+                  ))}
+              </Row>
+            </AnimatePresence>
+          </Slider>
+
+          {/* latest */}
+          <Slider>
+            <Filter>Latest</Filter>
+            <AnimatePresence>
+              <Row key="key_latest">
+                {data_latest ? (
+                  <Box
+                    layoutId={CATEGORY.LATEST + "_" + data_latest.id}
+                    key={`latest-${data_latest.id}`}
+                    onClick={() =>
+                      onBoxClicked(data_latest.id, CATEGORY.LATEST)
+                    }
+                    bg_photo={makeImagePath(
+                      data_latest.backdrop_path,
+                      data_latest.poster_path,
+                      "w500"
+                    )}
+                  >
+                    {data_latest.name}
+                  </Box>
+                ) : (
+                  ""
+                )}
+              </Row>
+            </AnimatePresence>
+          </Slider>
+
           {/* Detail Pop up */}
           <AnimatePresence>
-            {bigTvMatch ? " " : ""}
-
-
+            {bigTvMatch ? (
+              <>
+                <Overlay
+                  onClick={onOverlayClick}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                />
+                <BigMovie
+                  layoutId={category + "_" + bigTvMatch.params.tvId}
+                  scrolly={scrollY.get()}
+                >
+                  {clickedTv && (
+                    <>
+                      <BigCover
+                        style={{
+                          backgroundImage: `linear-gradient(to top, black, transparent),url(${makeImagePath(
+                            clickedTv.backdrop_path,
+                            clickedTv.poster_path,
+                            "w500"
+                          )})`,
+                        }}
+                      />
+                      <BigContent>
+                        <BigTitle>{clickedTv.name}</BigTitle>
+                        <BigOverview>
+                          {clickedTv.overview !== ""
+                            ? clickedTv.overview
+                            : "coming soon..."}
+                        </BigOverview>
+                      </BigContent>
+                    </>
+                  )}
+                </BigMovie>
+              </>
+            ) : (
+              "null"
+            )}
           </AnimatePresence>
         </>
       )}
