@@ -9,6 +9,8 @@ export interface iMovie {
   poster_path: string;
   title: string;
   overview: string;
+  release_date : string;
+  popularity : number;
 
   results?:[];
 }
@@ -28,6 +30,8 @@ export interface iGetMovieResult {
   backdrop_path?: string;
   poster_path?: string;
   overview?: string;
+  release_date? : string;
+  popularity? : number;
   
 }
 
@@ -37,6 +41,8 @@ export interface iTv {
   poster_path: string;
   name: string;
   overview: string;
+  release_date : string;
+  popularity : number;
 
   results?:[];
 
@@ -52,6 +58,8 @@ export interface iGetTvResult {
   backdrop_path?: string;
   poster_path?: string;
   overview?: string;
+  release_date? : string;
+  popularity? : number;
 }
 
 // Movies
@@ -118,4 +126,13 @@ export const getTv_latest = () => {
   );
 };
 
-
+export const getMovies = (keyword:string) => {
+  return fetch(`${BASE_PATH}/search/movie?api_key=${API_KEY}&query=${keyword}&page=1`).then(
+    (response) => response.json()
+  );
+}
+export const getTv = (keyword:string) => {
+  return fetch(`${BASE_PATH}/search/tv?api_key=${API_KEY}&query=${keyword}&page=1`).then(
+    (response) => response.json()
+  );
+}

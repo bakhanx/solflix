@@ -27,7 +27,7 @@ const Col = styled.div`
   align-items: center;
 `;
 const LogoWrapper = styled.div`
- margin-right: 50px;
+  margin-right: 50px;
 `;
 const Logo = styled(motion.svg)`
   width: 130px;
@@ -49,6 +49,8 @@ const Item = styled.li`
   transition: color 0.3s ease-in-out;
   &:hover {
     color: ${(props) => props.theme.white.lighter};
+    transform: scale(1.2);
+    transition: 0.2s ease;
   }
   position: relative;
   display: flex;
@@ -75,6 +77,11 @@ const Search = styled.form`
   position: relative;
   svg {
     height: 25px;
+  }
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.2);
+    transition: 0.1s ease;
   }
 `;
 const Input = styled(motion.input)`
@@ -125,7 +132,9 @@ const Header = () => {
   const [searchOpen, setSearchOpen] = useState(false);
 
   const homeMatch: PathMatch<string> | null = useMatch("/");
-  const tvMatch: PathMatch<string> | null = useMatch("/tv");
+  const tvMatch: PathMatch<string> | null = useMatch("/tvs");
+  const movieSearchMatch: PathMatch<string> | null = useMatch("/movie/search");
+  const tvSearchMatch: PathMatch<string> | null = useMatch("/tv/search");
 
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
@@ -133,6 +142,18 @@ const Header = () => {
   const { scrollY } = useViewportScroll();
 
   const navigate = useNavigate();
+
+  const { register, handleSubmit } = useForm<IForm>();
+
+  const onValid = (data: IForm) => {
+    if (homeMatch || movieSearchMatch) {
+      navigate(`/movie/search?keyword=${data.keyword}`);
+      window.location.reload();
+    } else if (tvMatch || tvSearchMatch) {
+      navigate(`/tv/search?keyword=${data.keyword}`);
+      window.location.reload();
+    }
+  };
   useEffect(() => {
     scrollY.onChange(() => {
       if (scrollY.get() > 80) {
@@ -143,11 +164,6 @@ const Header = () => {
     });
   }, [scrollY, navAnimation]);
 
-  const { register, handleSubmit } = useForm<IForm>();
-  const onValid = (data: IForm) => {
-    navigate(`/search?keyword=${data.keyword}`);
-    console.log(data);
-  };
   // ================= Handle ==========================
   const toggleSearch = () => {
     if (searchOpen) {
@@ -193,7 +209,7 @@ const Header = () => {
             </Link>
           </Item>
           <Item>
-            <Link to="/tv">
+            <Link to="/tvs">
               Tv Shows
               {tvMatch ? <Circle /> : null}
             </Link>

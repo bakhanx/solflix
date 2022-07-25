@@ -51,7 +51,7 @@ export const Banner = styled.div<{ bgphoto: string }>`
   padding: 60px;
   background-image: linear-gradient(
       rgba(0, 0, 0, 1),
-      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 0.3),
       rgba(0, 0, 0, 1)
     ),
     url(${(props) => props.bgphoto});
@@ -151,9 +151,19 @@ export const BigTitle = styled.h3`
   font-size: 36px;
   padding: 20px;
 `;
+export const BigRelease = styled.p`
+  font-size:20px;
+  padding:20px;
+`
+export const BigDetail = styled.p`
+  font-size : 20px;
+  padding-left : 20px;
+`
 export const BigOverview = styled.p`
   font-size: 18px;
+  margin-top:20px;
   padding: 20px;
+  border-top: 1px solid gray;
 `;
 export const BtnWrapper = styled.div`
   position: absolute;
@@ -639,6 +649,8 @@ const Home = () => {
                       />
                       <BigContent>
                         <BigTitle>{clickedMovie.title}</BigTitle>
+                        <BigRelease>{`🎬 Release Date : ${clickedMovie.release_date}`}</BigRelease>
+                        <BigDetail>{`💕 popularity : ${clickedMovie.popularity}`}</BigDetail>
                         <BigOverview>
                           {clickedMovie.overview !== ""
                             ? clickedMovie.overview

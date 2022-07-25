@@ -75,7 +75,7 @@ const Tv = () => {
   const { data: data_on_the_air, isLoading: isLoading_on_the_air } =
     useQuery<iGetTvResult>(["tv", "on_the_air"], getTv_on_the_air);
 
-  const bigTvMatch = useMatch("/tv/:tvId");
+  const bigTvMatch = useMatch("/tvs/:tvId");
 
   const IncreaseIndex = (num: number) => {
     let temp = [...index];
@@ -90,7 +90,7 @@ const Tv = () => {
 
   const navigate = useNavigate();
 
-  const onOverlayClick = () => navigate("/tv");
+  const onOverlayClick = () => navigate("/tvs");
 
   const onBoxClicked = (tvId: number | string, cate: CATEGORY) => {
     setCategory(cate);
@@ -112,7 +112,7 @@ const Tv = () => {
         setClickedData(data_latest);
         break;
     }
-    navigate(`/tv/${tvId}`);
+    navigate(`/tvs/${tvId}`);
   };
 
   const { scrollY } = useViewportScroll();
