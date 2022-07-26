@@ -146,12 +146,13 @@ const Header = () => {
   const { register, handleSubmit } = useForm<IForm>();
 
   const onValid = (data: IForm) => {
+    console.log('ver 1.0.0');
     if (homeMatch || movieSearchMatch) {
       navigate(`/movie/search?keyword=${data.keyword}`);
-      window.location.reload();
+      // window.location.reload();
     } else if (tvMatch || tvSearchMatch) {
       navigate(`/tv/search?keyword=${data.keyword}`);
-      window.location.reload();
+      // window.location.reload();
     }
   };
   useEffect(() => {

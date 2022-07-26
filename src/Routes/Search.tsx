@@ -17,6 +17,7 @@ const Wrapper = styled.div`
 const KeyWord = styled.div`
   margin-top: 80px;
   font-size: 48px;
+  margin-bottom : 20px;
 `;
 
 const Results = styled.div`
@@ -35,7 +36,7 @@ const Poster = styled.div<{ bg: string }>`
   width: 320px;
   height: 240px;
   border: 1px solid;
-  background-image: url(${(props) => props.bg});
+  /* background-image: url(${(props) => props.bg}); */
   background-size: cover;
   background-position: center;
 `;
@@ -67,6 +68,10 @@ const Popularity = styled.p`
   font-size: 16px;
 `;
 
+const Error = styled.div`
+  color:red;
+`
+
 const Search = () => {
   const location = useLocation();
 
@@ -95,6 +100,11 @@ const Search = () => {
           <KeyWord>
             {searchType} Search : "{keyword}"
           </KeyWord>
+          <div>Updating... </div>
+          <Error>   Content Security Policy : 
+           Load Image source, Page Refresh </Error>
+        
+
           <hr />
           <Results>
             {matchData?.results.map((tv) => {
