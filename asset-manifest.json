@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/solflix/static/js/main.60e94e85.js",
+    "main.js": "/solflix/static/js/main.a68d2320.js",
     "index.html": "/solflix/index.html",
-    "main.60e94e85.js.map": "/solflix/static/js/main.60e94e85.js.map"
+    "main.a68d2320.js.map": "/solflix/static/js/main.a68d2320.js.map"
   },
   "entrypoints": [
-    "static/js/main.60e94e85.js"
+    "static/js/main.a68d2320.js"
   ]
 }
