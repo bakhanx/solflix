@@ -2,7 +2,6 @@ import { AnimatePresence, useViewportScroll } from "framer-motion";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { useMatch, useNavigate } from "react-router-dom";
-import styled from "styled-components";
 import {
   getTv_airing_today,
   getTv_latest,
@@ -17,8 +16,10 @@ import {
   Banner,
   BigContent,
   BigCover,
+  BigDetail,
   BigMovie,
   BigOverview,
+  BigRelease,
   BigTitle,
   Box,
   BtnWrapper,
@@ -48,15 +49,16 @@ const enum CATEGORY {
 //                Component
 // ================================================
 
+
+
 // ================================================
 //                TV
 // ================================================
 
 const Tv = () => {
-  const [index, setIndex] = useState([0, 0, 0, 0, 0]);
+  const [index, setIndex] = useState([0, 0, 0, 0]);
   const [category, setCategory] = useState<CATEGORY>(CATEGORY.ON_THE_AIR);
 
-  const [leaving, setLeaving] = useState<boolean>(false);
   const [clickedData, setClickedData] = useState<iGetTvResult | iTv>();
 
   const { data: data_airing_today, isLoading: isLoading_airing_today } =
@@ -117,8 +119,6 @@ const Tv = () => {
 
   const { scrollY } = useViewportScroll();
 
-  const toggleLeaving = () => setLeaving((prev) => !prev);
-
   const clickedTv =
     bigTvMatch?.params.tvId &&
     (clickedData?.results
@@ -139,7 +139,7 @@ const Tv = () => {
               data_on_the_air?.results[0].poster_path
             )}
           >
-            <Title>{data_on_the_air?.results[0].name}</Title>
+            <Title onClick={()=>onBoxClicked(data_on_the_air?.results[0].id as number, CATEGORY.ON_THE_AIR)}>🔥 {data_on_the_air?.results[0].name}</Title>
             <Overview>{data_on_the_air?.results[0].overview}</Overview>
           </Banner>
 
@@ -235,8 +235,8 @@ const Tv = () => {
           <Slider>
             <Filter>On The Air</Filter>
             <BtnWrapper>
-              <SlideBtn onClick={() => DecreaseIndex(0)}>{`<`}</SlideBtn>
-              <SlideBtn onClick={() => IncreaseIndex(0)}>{`>`}</SlideBtn>
+              <SlideBtn onClick={() => DecreaseIndex(3)}>{`<`}</SlideBtn>
+              <SlideBtn onClick={() => IncreaseIndex(3)}>{`>`}</SlideBtn>
             </BtnWrapper>
             <AnimatePresence>
               <Row key="key_on_the_air">
@@ -300,6 +300,8 @@ const Tv = () => {
                 <BigMovie
                   layoutId={category + "_" + bigTvMatch.params.tvId}
                   scrolly={scrollY.get()}
+                  animate={{opacity:1}}
+                  exit={{opacity:0 , scale:0, transition:{duration:0.5}}}
                 >
                   {clickedTv && (
                     <>
@@ -314,6 +316,8 @@ const Tv = () => {
                       />
                       <BigContent>
                         <BigTitle>{clickedTv.name}</BigTitle>
+                        <BigRelease>{`🎬 Release Date : ${clickedTv.release_date}`}</BigRelease>
+                        <BigDetail>{`💕 popularity : ${clickedTv.popularity}`}</BigDetail>
                         <BigOverview>
                           {clickedTv.overview !== ""
                             ? clickedTv.overview

@@ -133,8 +133,8 @@ const Header = () => {
 
   const homeMatch: PathMatch<string> | null = useMatch("/");
   const tvMatch: PathMatch<string> | null = useMatch("/tvs");
-  const movieSearchMatch: PathMatch<string> | null = useMatch("/movie/search");
-  const tvSearchMatch: PathMatch<string> | null = useMatch("/tv/search");
+  // const movieSearchMatch: PathMatch<string> | null = useMatch("/movie/:search");
+  // const tvSearchMatch: PathMatch<string> | null = useMatch("/tv/:search");
 
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
@@ -143,17 +143,13 @@ const Header = () => {
 
   const navigate = useNavigate();
 
-  const { register, handleSubmit } = useForm<IForm>();
+  const { register, handleSubmit, setValue } = useForm<IForm>();
+
 
   const onValid = (data: IForm) => {
-    console.log('ver 1.0.0');
-    if (homeMatch || movieSearchMatch) {
-      navigate(`/movie/search?keyword=${data.keyword}`);
-      // window.location.reload();
-    } else if (tvMatch || tvSearchMatch) {
-      navigate(`/tv/search?keyword=${data.keyword}`);
-      // window.location.reload();
-    }
+    console.log(data);
+    setValue("keyword", "");
+    navigate(`/search?keyword=${data.keyword}`);
   };
   useEffect(() => {
     scrollY.onChange(() => {

@@ -60,6 +60,11 @@ export const Banner = styled.div<{ bgphoto: string }>`
 export const Title = styled.h2`
   font-size: 58px;
   margin-bottom: 20px;
+  &:hover{
+    cursor : pointer;
+    color:red;
+    transition: 0.2s ease;
+  }
 `;
 export const Overview = styled.p`
   font-size: 28px;
@@ -86,6 +91,7 @@ export const Row = styled(motion.div)`
 export const Box = styled(motion.div)<{ bg_photo: string }>`
   background-color: white;
   height: 200px;
+
   color: white;
   font-size: 20px;
   background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -419,7 +425,9 @@ const Home = () => {
               data_now_playing?.results[0].backdrop_path || ""
             )}
           >
-            <Title>{data_now_playing?.results[0].title}</Title>
+            <Title onClick={()=>onBoxClicked(data_now_playing?.results[0].id as number, CATEGORY.NOW_PLAYING)}>🔥 {data_now_playing?.results[0].title}</Title>
+            <div>
+            </div>
             <Overview>{data_now_playing?.results[0].overview}</Overview>
           </Banner>
           {/* Top Rated */}
@@ -621,8 +629,6 @@ const Home = () => {
             </AnimatePresence>
           </Slider>
 
-
-          
           {/* Detail Pop up */}
           <AnimatePresence>
             {bigMovieMatch ? (
@@ -635,6 +641,8 @@ const Home = () => {
                 <BigMovie
                   layoutId={category + "_" + bigMovieMatch.params.movieId}
                   scrolly={scrollY.get()}
+                  animate={{opacity:1}}
+                  exit={{opacity:0 , scale:0, transition:{duration:0.5}}}
                 >
                   {clickedMovie && (
                     <>

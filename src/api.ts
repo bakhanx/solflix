@@ -13,6 +13,7 @@ export interface iMovie {
   popularity : number;
 
   results?:[];
+  name?:string;
 }
 
 export interface iGetMovieResult {
@@ -45,6 +46,7 @@ export interface iTv {
   popularity : number;
 
   results?:[];
+  title?:string;
 
 }
 export interface iGetTvResult {
