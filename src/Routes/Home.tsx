@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useViewportScroll } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -12,10 +12,7 @@ import {
   iGetMovieResult,
   iMovie,
 } from "../api";
-import {
-  makeImagePath,
-  makeImagePath_backdrop,
-} from "../utils";
+import { makeImagePath, makeImagePath_backdrop } from "../utils";
 
 // ================================================
 //               Constant
@@ -60,9 +57,9 @@ export const Banner = styled.div<{ bgphoto: string }>`
 export const Title = styled.h2`
   font-size: 58px;
   margin-bottom: 20px;
-  &:hover{
-    cursor : pointer;
-    color:red;
+  &:hover {
+    cursor: pointer;
+    color: red;
     transition: 0.2s ease;
   }
 `;
@@ -158,16 +155,16 @@ export const BigTitle = styled.h3`
   padding: 20px;
 `;
 export const BigRelease = styled.p`
-  font-size:20px;
-  padding:20px;
-`
+  font-size: 20px;
+  padding: 20px;
+`;
 export const BigDetail = styled.p`
-  font-size : 20px;
-  padding-left : 20px;
-`
+  font-size: 20px;
+  padding-left: 20px;
+`;
 export const BigOverview = styled.p`
   font-size: 18px;
-  margin-top:20px;
+  margin-top: 20px;
   padding: 20px;
   border-top: 1px solid gray;
 `;
@@ -207,9 +204,17 @@ export const BoxVariants = {
   },
 };
 export const RowVariants = {
-  hidden: { x: + window.outerWidth - 5 },
+  hidden: (isIncrease: boolean) => {
+    return {
+      x: isIncrease ? +window.outerWidth - 5 : -window.outerWidth + 5,
+    };
+  },
   visible: { x: 0 },
-  exit: { x: -window.outerWidth + 5 },
+  exit: (isIncrease: boolean) => {
+    return {
+      x: isIncrease ? -window.outerWidth + 5 : +window.outerWidth - 5,
+    };
+  },
 };
 export const InfoVariants = {
   hover: {
@@ -251,7 +256,7 @@ const Home = () => {
   const [index_now_playing, setIndex_now_playing] = useState(0);
   const [index_popular, setIndex_popular] = useState(0);
 
-  const [isIncrease, setIsIncrease] = useState<boolean>(false);
+  const [isIncrease, setIsIncrease] = useState<boolean>(true);
   const [leaving, setLeaving] = useState<boolean>(false);
 
   const [category, setCategory] = useState<CATEGORY>(CATEGORY.NOW_PLAYING);
@@ -278,7 +283,6 @@ const Home = () => {
   // ============ Handle Function ============
 
   const toggleLeaving = () => setLeaving((prev) => !prev);
-
   // count Total Movies
   (() => {
     if (data_latest) {
@@ -287,7 +291,7 @@ const Home = () => {
     }
 
     if (data_top_rated) {
-      totalMovies_top_rated =data_top_rated.results.length - 1;
+      totalMovies_top_rated = data_top_rated.results.length - 1;
       maxIndex_top_rated = Math.floor(totalMovies_top_rated / OFFSET) - 1;
     }
 
@@ -303,18 +307,14 @@ const Home = () => {
       totalMovies_popular = data_popular.results.length - 1;
       maxIndex_popular = Math.floor(totalMovies_popular / OFFSET) - 1;
     }
-    
   })();
-
-  
 
   // Increase
   const increaseIndex = (cate: CATEGORY) => {
-    setIsIncrease(true);
     //연속 버튼 방지
+    setIsIncrease(true);
     if (leaving) return;
     toggleLeaving();
-
     switch (cate) {
       case CATEGORY.LATEST:
         setIndex_latest((prev) =>
@@ -343,10 +343,10 @@ const Home = () => {
         break;
     }
   };
-  const decreaseIndex = (cate: CATEGORY) => {
-    setIsIncrease((prev) => false);
 
+  const decreaseIndex = (cate: CATEGORY) => {
     //연속 버튼 방지
+    setIsIncrease(false);
     if (leaving) return;
     toggleLeaving();
 
@@ -425,31 +425,43 @@ const Home = () => {
               data_now_playing?.results[0].backdrop_path || ""
             )}
           >
-            <Title onClick={()=>onBoxClicked(data_now_playing?.results[0].id as number, CATEGORY.NOW_PLAYING)}>🔥 {data_now_playing?.results[0].title}</Title>
-            <div>
-            </div>
+            <Title
+              onClick={() =>
+                onBoxClicked(
+                  data_now_playing?.results[0].id as number,
+                  CATEGORY.NOW_PLAYING
+                )
+              }
+            >
+              🔥 {data_now_playing?.results[0].title}
+            </Title>
+            <div></div>
             <Overview>{data_now_playing?.results[0].overview}</Overview>
           </Banner>
           {/* Top Rated */}
           <Slider>
-          
-              <Filter key="key_top_rated">Top Rated</Filter>
-              <BtnWrapper>
-                <SlideBtn onClick={() => decreaseIndex(CATEGORY.TOP_RATED)}>
-                  {`<`}
-                </SlideBtn>
-                <SlideBtn onClick={() => increaseIndex(CATEGORY.TOP_RATED)}>
-                  {`>`}
-                </SlideBtn>
-              </BtnWrapper>
-              <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+            <Filter key="key_top_rated">Top Rated</Filter>
+            <BtnWrapper>
+              <SlideBtn onClick={() => decreaseIndex(CATEGORY.TOP_RATED)}>
+                {`<`}
+              </SlideBtn>
+              <SlideBtn onClick={() => increaseIndex(CATEGORY.TOP_RATED)}>
+                {`>`}
+              </SlideBtn>
+            </BtnWrapper>
+            <AnimatePresence
+              initial={false}
+              onExitComplete={toggleLeaving}
+              custom={isIncrease}
+            >
               <Row
                 key={index_top_rated}
                 variants={RowVariants}
-                initial={isIncrease ? "hidden" : "exit"}
+                initial={"hidden"}
                 animate="visible"
-                exit={isIncrease ? "exit" : "hidden"}
+                exit={"exit"}
                 transition={{ type: "tween", duration: 2 }}
+                custom={isIncrease}
               >
                 {data_top_rated?.results
                   .slice(1)
@@ -484,7 +496,7 @@ const Home = () => {
           </Slider>
           {/* Upcoming */}
           <Slider>
-            <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+            <AnimatePresence initial={false} onExitComplete={toggleLeaving} custom={isIncrease}>
               <Filter key="key_upcoming">Upcoming</Filter>
               <BtnWrapper>
                 <SlideBtn onClick={() => decreaseIndex(CATEGORY.UPCOMING)}>
@@ -500,10 +512,11 @@ const Home = () => {
               <Row
                 key={index_upcoming}
                 variants={RowVariants}
-                initial={isIncrease ? "hidden" : "exit"}
+                initial={"hidden"}
                 animate="visible"
-                exit={isIncrease ? "exit" : "hidden"}
+                exit={"exit"}
                 transition={{ type: "tween", duration: 2 }}
+                custom={isIncrease}
               >
                 {data_upcoming?.results
                   .slice(1)
@@ -538,7 +551,7 @@ const Home = () => {
           </Slider>
           {/* Now Playing */}
           <Slider>
-            <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+            <AnimatePresence initial={false} onExitComplete={toggleLeaving} custom={isIncrease}>
               <Filter key="key_now_playing">Now Playing</Filter>
               <BtnWrapper>
                 <SlideBtn onClick={() => decreaseIndex(CATEGORY.NOW_PLAYING)}>
@@ -551,10 +564,11 @@ const Home = () => {
               <Row
                 key={index_now_playing}
                 variants={RowVariants}
-                initial={isIncrease ? "hidden" : "exit"}
+                initial={ "hidden"}
                 animate="visible"
-                exit={isIncrease ? "exit" : "hidden"}
+                exit={"exit" }
                 transition={{ type: "tween", duration: 2 }}
+                custom={isIncrease}
               >
                 {data_now_playing?.results
                   .slice(1)
@@ -589,16 +603,17 @@ const Home = () => {
           </Slider>
           {/* Latest */}
           <Slider>
-            <AnimatePresence initial={false} onExitComplete={toggleLeaving}>
+            <AnimatePresence initial={false} onExitComplete={toggleLeaving} custom={isIncrease}>
               <Filter key="key_latest">Latest</Filter>
 
               <Row
                 key={index_latest}
                 variants={RowVariants}
-                initial={isIncrease ? "hidden" : "exit"}
+                initial={"hidden" }
                 animate="visible"
-                exit={isIncrease ? "exit" : "hidden"}
+                exit={"exit" }
                 transition={{ type: "tween", duration: 2 }}
+                custom={isIncrease}
               >
                 {data_latest?.id ? (
                   <Box
@@ -641,8 +656,8 @@ const Home = () => {
                 <BigMovie
                   layoutId={category + "_" + bigMovieMatch.params.movieId}
                   scrolly={scrollY.get()}
-                  animate={{opacity:1}}
-                  exit={{opacity:0 , scale:0, transition:{duration:0.5}}}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0, scale: 0, transition: { duration: 0.5 } }}
                 >
                   {clickedMovie && (
                     <>
