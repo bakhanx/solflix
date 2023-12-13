@@ -12,18 +12,15 @@ const Wrapper = styled.div`
   background-color: black;
   padding: 60px;
 `;
-
 const KeyWord = styled.div`
   margin-top: 200px;
   font-size: 48px;
   margin-bottom: 20px;
 `;
-
 const Results = styled.div`
   padding: 30px;
   height: 100vh;
 `;
-
 const Row = styled.div`
   width: 100vw;
   height: 240px;
@@ -53,20 +50,17 @@ const Overview = styled.div`
   padding: 10px;
   width: 60vw;
 `;
-
 const Detail = styled.div`
   width: 60vw;
   display: flex;
   justify-content: space-between;
 `;
-
 const Release = styled.p`
   font-size: 16px;
 `;
 const Popularity = styled.p`
   font-size: 16px;
 `;
-
 const MovieBtn = styled.button<{ color: string }>`
   width: 80px;
   height: 30px;
@@ -83,9 +77,8 @@ const MovieBtn = styled.button<{ color: string }>`
   border-top: 1px solid;
   border-top-left-radius: 5px;
 `;
-
-const TvBtn = styled(MovieBtn)``;
-
+const TvBtn = styled(MovieBtn)`
+`;
 const NoResult = styled.div`
   font-size: 36px;
 `;
