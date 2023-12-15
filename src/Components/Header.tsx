@@ -130,21 +130,13 @@ interface IForm {
 const Header = () => {
   // ============= Hook =============================
   const [searchOpen, setSearchOpen] = useState(false);
-
   const homeMatch: PathMatch<string> | null = useMatch("/");
   const tvMatch: PathMatch<string> | null = useMatch("/tvs");
-  // const movieSearchMatch: PathMatch<string> | null = useMatch("/movie/:search");
-  // const tvSearchMatch: PathMatch<string> | null = useMatch("/tv/:search");
-
   const inputAnimation = useAnimation();
   const navAnimation = useAnimation();
-
   const { scrollY } = useViewportScroll();
-
   const navigate = useNavigate();
-
   const { register, handleSubmit, setValue } = useForm<IForm>();
-
 
   const onValid = (data: IForm) => {
     console.log(data);
