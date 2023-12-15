@@ -1,10 +1,12 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { RecoilRoot } from "recoil";
-import App from "./App";
+import App from "./Root";
 import { createGlobalStyle, ThemeProvider } from "styled-components";
 import { theme } from "./theme";
 import { QueryClient, QueryClientProvider } from "react-query";
+import { RouterProvider } from "react-router-dom";
+import router from "./Router";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -41,7 +43,7 @@ body {
 	line-height: 1.2;
 	font-weight:300;
 	font-family: 'Source Sans Pro', sans-serif;
-	color:${props=>props.theme.white.darker};
+	color:${(props) => props.theme.white.darker};
 	background-color: black;
 	overflow-x: hidden; // hide scroll-X
 }
@@ -74,7 +76,7 @@ root.render(
       <QueryClientProvider client={client}>
         <ThemeProvider theme={theme}>
           <GlobalStyle />
-          <App />
+          <RouterProvider router={router} />
         </ThemeProvider>
       </QueryClientProvider>
     </RecoilRoot>
