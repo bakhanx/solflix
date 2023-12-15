@@ -159,7 +159,7 @@ const Search = () => {
                   <Content>
                     <Detail>
                       <Popularity>{`💕 popularity : ${data.popularity}`}</Popularity>
-                      <Release>{`🎬 Release Date : ${data.release_date}`}</Release>
+                      <Release>{`🎬 Release Date : ${data.release_date || "unknown"}`}</Release>
                     </Detail>
 
                     <Title>{isMovie ? data?.title : data?.name}</Title>
