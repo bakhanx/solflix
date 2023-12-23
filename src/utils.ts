@@ -1,9 +1,19 @@
-export const makeImagePath_backdrop = (id?: string, format?: string) => {
-  return `https://image.tmdb.org/t/p/${format ?? "original"}/${id}`;
+import sampleImg from "./Image/no_image.jpg";
+
+export const makeImagePath_backdrop = (backdrop?: string, format?: string) => {
+  if (backdrop) {
+    return `https://image.tmdb.org/t/p/${format ?? "original"}/${backdrop}`;
+  } else {
+    return sampleImg;
+  }
 };
 
-export const makeImagePath_poster = (id?: string, format?: string) => {
-  return `https://image.tmdb.org/t/p/${format ?? "original"}/${id}`;
+export const makeImagePath_poster = (backdrop?: string, format?: string) => {
+  if (backdrop) {
+    return `https://image.tmdb.org/t/p/${format ?? "original"}/${backdrop}`;
+  } else {
+    return sampleImg;
+  }
 };
 
 export const makeImagePath = (
@@ -11,7 +21,13 @@ export const makeImagePath = (
   poster?: string,
   format?: string
 ) => {
-  return `https://image.tmdb.org/t/p/${format ?? "original"}/${backdrop !==null ? backdrop : poster}`;
+  if (backdrop || poster) {
+    return `https://image.tmdb.org/t/p/${format ?? "original"}/${
+      backdrop !== null ? backdrop : poster
+    }`;
+  } else {
+    return sampleImg;
+  }
 };
 
 // format: size,
