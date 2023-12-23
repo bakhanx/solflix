@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useViewportScroll } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery } from "react-query";
 import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -200,7 +200,7 @@ export const BoxVariants = {
   hover: {
     scale: 1.3,
     y: -80,
-    transition: { delay: 0.3, duration: 0.3, type: "tween" },
+    transition: { delay: 0, duration: 0.3, type: "tween" },
   },
 };
 export const RowVariants = {
@@ -438,6 +438,7 @@ const Home = () => {
             <div></div>
             <Overview>{data_now_playing?.results[0].overview}</Overview>
           </Banner>
+          
           {/* Top Rated */}
           <Slider>
             <Filter key="key_top_rated">Top Rated</Filter>
@@ -616,6 +617,7 @@ const Home = () => {
                 custom={isIncrease}
               >
                 {data_latest?.id ? (
+                  <>
                   <Box
                     key={data_latest.id}
                     layoutId={CATEGORY.LATEST + "_" + data_latest.id}
@@ -637,6 +639,8 @@ const Home = () => {
                       <h4>{data_latest.title}</h4>
                     </Info>
                   </Box>
+                  <div></div>
+                  </>
                 ) : (
                   ""
                 )}
