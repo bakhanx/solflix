@@ -13,9 +13,8 @@ export interface iMovie {
   overview: string;
   release_date: string;
   popularity: number;
-
-  results?: [];
   name?: string;
+  results? : []
 }
 
 export interface iGetMovieResult {
@@ -30,33 +29,6 @@ export interface iGetMovieResult {
 
   id?: number;
   title?: string;
-  backdrop_path?: string;
-  poster_path?: string;
-  overview?: string;
-  release_date?: string;
-  popularity?: number;
-}
-
-export interface iTv {
-  id: number;
-  backdrop_path: string;
-  poster_path: string;
-  name: string;
-  overview: string;
-  release_date: string;
-  popularity: number;
-
-  results?: [];
-  title?: string;
-}
-export interface iGetTvResult {
-  page: number;
-  results: iTv[];
-  total_pages: number;
-  total_results: number;
-
-  id?: number;
-  name?: string;
   backdrop_path?: string;
   poster_path?: string;
   overview?: string;
