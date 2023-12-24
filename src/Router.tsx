@@ -5,6 +5,7 @@ import Home from "./Routes/Home";
 import Search from "./Routes/Search";
 import Tv from "./Routes/Tv";
 import ErrorComponents from "./Components/ErrorComponents";
+import Detail from "./Components/Detail";
 
 const router = createBrowserRouter([
   {
@@ -14,29 +15,31 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
-        errorElement: <ErrorComponents/>,
-        children :[
-            {
-                path: "/movies/:movieId",
-                errorElement: <ErrorComponents/>,
-            }
-        ]
+        errorElement: <ErrorComponents />,
+        children: [
+          {
+            path: "/movies/:movieId",
+            element: <></>,
+            errorElement: <ErrorComponents />,
+          },
+        ],
       },
       {
         path: "search",
         element: <Search />,
-        errorElement: <ErrorComponents/>
+        errorElement: <ErrorComponents />,
       },
       {
         path: "/tvs",
         element: <Tv />,
-        children :[
-            {
-                path: "/tvs/:tvId",
-                errorElement: <ErrorComponents/>,
-            }
+        children: [
+          {
+            path: "/tvs/:tvId",
+            element: <></>,
+            errorElement: <ErrorComponents />,
+          },
         ],
-        errorElement: <ErrorComponents/>
+        errorElement: <ErrorComponents />,
       },
     ],
     errorElement: <NotFound />,
