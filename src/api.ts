@@ -15,6 +15,7 @@ export interface iMovie {
   popularity: number;
   name?: string;
   results? : []
+  first_air_date? :string;
 }
 
 export interface iGetMovieResult {
@@ -29,11 +30,13 @@ export interface iGetMovieResult {
 
   id?: number;
   title?: string;
+  name?: string;
   backdrop_path?: string;
   poster_path?: string;
   overview?: string;
   release_date?: string;
   popularity?: number;
+  first_air_date? :string;
 }
 
 // Movies
