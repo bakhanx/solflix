@@ -1,7 +1,6 @@
-import { AnimatePresence, motion, useViewportScroll } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import {
-  useMatch,
   useNavigate,
 } from "react-router-dom";
 import styled from "styled-components";
@@ -131,12 +130,8 @@ const Slider = ({ cate, data, title, urlType }: iSlider) => {
 
   const [isIncrease, setIsIncrease] = useState<boolean>(true);
   const [leaving, setLeaving] = useState<boolean>(false);
-
-  const [category, setCategory] = useState<CATEGORY>(CATEGORY.NOW_PLAYING);
   const [clickedData, setClickedData] = useState<iGetMovieResult | iMovie>();
 
-  const bigMovieMatch = useMatch(`/${urlType}/:movieId`);
-  const { scrollY } = useViewportScroll();
   const navigate = useNavigate();
   const toggleLeaving = () => setLeaving((prev) => !prev);
   // count Total Movies
@@ -197,7 +192,6 @@ const Slider = ({ cate, data, title, urlType }: iSlider) => {
             custom={isIncrease}
           >
             {data?.results
-              .slice(1)
               .slice(index * OFFSET, index * OFFSET + OFFSET)
               .map((movie) => (
                 <Box

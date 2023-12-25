@@ -11,7 +11,6 @@ import {
 } from "../api";
 import Slider from "../Components/Slider";
 
-import Detail from "../Components/Detail";
 import Banner from "../Components/Banner";
 
 // ================================================
@@ -23,6 +22,9 @@ export const enum CATEGORY {
   "UPCOMING" = "UPCOMING",
   "NOW_PLAYING" = "NOW_PLAYING",
   "POPULAR" = "POPULAR",
+
+  "AIRING_TODAY" = "AIRING_TODAY",
+  "ON_THE_AIR" = "ON_THE_AIR",
 }
 
 // ================================================
@@ -64,32 +66,42 @@ const Home = () => {
   // ============= Return ===========================
   return (
     <Wrapper>
-      {isLoading_now_playing ? (
+      {isLoading_now_playing ||
+      isLoading_data_popular ||
+      isloading_top_rated ||
+      isLoading_data_upcoming ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
           {/* Banner */}
-          <Banner data={data_now_playing as iGetMovieResult} urlType={"movies"}/>
+          <Banner
+            data={data_popular as iGetMovieResult}
+            urlType={"movies"}
+          />
 
           {/* Slider */}
           <Slider
-            cate={CATEGORY.UPCOMING}
-            data={data_upcoming as iGetMovieResult}
-            title={"Upcomming"}
+            cate={CATEGORY.NOW_PLAYING}
+            data={data_now_playing as iGetMovieResult}
+            title={"Now Playing"}
             urlType="movies"
           />
-
           <Slider
             cate={CATEGORY.TOP_RATED}
             data={data_top_rated as iGetMovieResult}
             title={"Top Rated"}
             urlType="movies"
           />
-
           <Slider
             cate={CATEGORY.POPULAR}
             data={data_popular as iGetMovieResult}
             title={"Popular"}
+            urlType="movies"
+          />
+          <Slider
+            cate={CATEGORY.UPCOMING}
+            data={data_upcoming as iGetMovieResult}
+            title={"Upcomming"}
             urlType="movies"
           />
         </>

@@ -45,7 +45,10 @@ const Tv = () => {
 
   return (
     <Wrapper>
-      {isLoading_on_the_air ? (
+      {isLoading_on_the_air ||
+      isLoading_top_rated ||
+      isLoading_airing_today ||
+      isLoading_popular ? (
         <Loader>Loading...</Loader>
       ) : (
         <>
@@ -53,17 +56,27 @@ const Tv = () => {
 
           {/* Slider */}
           <Slider
-            cate={CATEGORY.TOP_RATED}
-            data={data_top_rated as iGetMovieResult}
-            key={CATEGORY.TOP_RATED}
-            title="Top Rated"
+            cate={CATEGORY.ON_THE_AIR}
+            data={data_on_the_air as iGetMovieResult}
+            title="On The Air"
             urlType="tvs"
           />
           <Slider
-            cate={CATEGORY.NOW_PLAYING}
+            cate={CATEGORY.AIRING_TODAY}
             data={data_airing_today as iGetMovieResult}
-            key={CATEGORY.NOW_PLAYING}
             title="Airing Today"
+            urlType="tvs"
+          />
+          <Slider
+            cate={CATEGORY.POPULAR}
+            data={data_popular as iGetMovieResult}
+            title="Popular"
+            urlType="tvs"
+          />
+          <Slider
+            cate={CATEGORY.TOP_RATED}
+            data={data_top_rated as iGetMovieResult}
+            title="Top Rated"
             urlType="tvs"
           />
         </>

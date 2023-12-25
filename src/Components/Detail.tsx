@@ -2,7 +2,7 @@ import { AnimatePresence, motion, useViewportScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useNavigate, useMatch } from "react-router-dom";
 import styled from "styled-components";
-import { iGetMovieResult, iMovie } from "../api";
+import { iGetMovieResult } from "../api";
 import { makeImagePath } from "../utils";
 
 export const BigMovie = styled(motion.div)<{ scrolly: number }>`
