@@ -35,15 +35,16 @@ export const Overview = styled.p`
 `;
 interface iBanner {
   data: iGetMovieResult;
+  urlType: "movies" | "tvs";
 }
 
-const Banner = ({ data }: iBanner) => {
+const Banner = ({ data, urlType }: iBanner) => {
   const navigate = useNavigate();
   const [clickedData, setClickedData] = useState<iGetMovieResult>();
 
   const onBoxClicked = (movieId: number | string, cate: CATEGORY) => {
     setClickedData(data);
-    navigate(`/movies/${movieId}`);
+    navigate(`/${urlType}/${movieId}`);
   };
 
   return (
@@ -56,13 +57,13 @@ const Banner = ({ data }: iBanner) => {
             onBoxClicked(data?.results[0].id as number, CATEGORY.NOW_PLAYING)
           }
         >
-          🔥 {data?.results[0].title}
+          🔥 {data?.results[0].title || data?.results[0].name}
         </Title>
         <div></div>
         <Overview>{data?.results[0].overview}</Overview>
       </Container>
 
-      <Detail data={clickedData as iGetMovieResult} />
+      <Detail data={clickedData as iGetMovieResult} urlType={urlType} />
     </>
   );
 };
