@@ -16,6 +16,7 @@ export const BigMovie = styled(motion.div)<{ scrolly: number }>`
   background-color: ${(props) => props.theme.black.lighter};
   border-radius: 15px;
   overflow: hidden;
+  z-index: 50;
 `;
 export const BigCover = styled.div`
   width: 100%;
@@ -57,14 +58,21 @@ export const Overlay = styled(motion.div)`
 
 interface iDetail {
   data: iGetMovieResult;
+  urlType: "movies" | "tvs";
 }
-const Detail = ({ data }: iDetail) => {
-  const bigMovieMatch = useMatch("/movies/:movieId");
+const Detail = ({ data, urlType }: iDetail) => {
+  const bigMovieMatch = useMatch(`/${urlType}/:movieId`);
   const navigate = useNavigate();
   const { scrollY } = useViewportScroll();
 
-  const onOverlayClick = () => navigate("/");
-
+  const onOverlayClick = () => {
+    if(urlType==="movies"){
+      navigate("/");
+    } else if(urlType==="tvs"){
+      navigate("/tvs")
+    }
+     
+  }
   const [clickedMovie, setClickedMovie] = useState<iGetMovieResult>(data);
   //   const [clickedData, setClickedData] = useState<iGetMovieResult | iMovie>();
 
@@ -78,10 +86,10 @@ const Detail = ({ data }: iDetail) => {
         : data);
     setClickedMovie(findMovie as any);
   }, [bigMovieMatch, clickedMovie, data]);
-  
+
   return (
     <AnimatePresence>
-      {bigMovieMatch && clickedMovie? (
+      {bigMovieMatch && clickedMovie ? (
         <>
           <Overlay
             onClick={onOverlayClick}
@@ -106,7 +114,7 @@ const Detail = ({ data }: iDetail) => {
                   }}
                 />
                 <BigContent>
-                  <BigTitle>{clickedMovie.title}</BigTitle>
+                  <BigTitle>{clickedMovie.title || clickedMovie.name}</BigTitle>
                   <BigRelease>{`🎬 Release Date : ${clickedMovie.release_date}`}</BigRelease>
                   <BigDetail>{`💕 popularity : ${clickedMovie.popularity}`}</BigDetail>
                   <BigOverview>
@@ -119,7 +127,9 @@ const Detail = ({ data }: iDetail) => {
             )}
           </BigMovie>
         </>
-      ) : "Coming soon"}
+      ) : (
+        "Coming soon"
+      )}
     </AnimatePresence>
   );
 };
