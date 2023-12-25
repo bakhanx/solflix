@@ -171,9 +171,7 @@ const Header = () => {
       <Col>
         <LogoWrapper>
           <Link to="/">
-            <Logo>
-              {/* <img src={LogoImg} width={130} height={40} alt="" /> */}
-            </Logo>
+            <Logo />
           </Link>
         </LogoWrapper>
 
@@ -181,13 +179,13 @@ const Header = () => {
           <Item>
             <Link to="/">
               Home
-              {homeMatch ? <Circle /> : null}
+              {homeMatch ? <Circle layoutId="circle"/> : null}
             </Link>
           </Item>
           <Item>
             <Link to="/tvs">
               Tv Shows
-              {tvMatch ? <Circle /> : null}
+              {tvMatch ? <Circle layoutId="circle"/> : null}
             </Link>
           </Item>
         </Items>
