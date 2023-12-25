@@ -1,6 +1,11 @@
 import { AnimatePresence, motion, useViewportScroll } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useMatch, useNavigate } from "react-router-dom";
+import {
+  useLocation,
+  useMatch,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import styled from "styled-components";
 import { iGetMovieResult, iMovie } from "../api";
 import { makeImagePath_backdrop } from "../utils";
@@ -120,9 +125,10 @@ interface iSlider {
   cate: CATEGORY;
   data: iGetMovieResult;
   title: string;
+  urlType: "tvs" | "movies";
 }
 
-const Slider = ({ cate, data, title }: iSlider) => {
+const Slider = ({ cate, data, title, urlType }: iSlider) => {
   const [index, setIndex] = useState(0);
 
   const [isIncrease, setIsIncrease] = useState<boolean>(true);
@@ -131,10 +137,9 @@ const Slider = ({ cate, data, title }: iSlider) => {
   const [category, setCategory] = useState<CATEGORY>(CATEGORY.NOW_PLAYING);
   const [clickedData, setClickedData] = useState<iGetMovieResult | iMovie>();
 
-  const bigMovieMatch = useMatch("/movies/:movieId");
+  const bigMovieMatch = useMatch(`/${urlType}/:movieId`);
   const { scrollY } = useViewportScroll();
   const navigate = useNavigate();
-
   const toggleLeaving = () => setLeaving((prev) => !prev);
   // count Total Movies
   const [totalMovies, setTotalMovies] = useState(0);
@@ -166,7 +171,7 @@ const Slider = ({ cate, data, title }: iSlider) => {
   const onBoxClicked = (movieId: number | string, cate: CATEGORY) => {
     // setCategory(cate);
     setClickedData(data);
-    navigate(`/movies/${movieId}`);
+    navigate(`/${urlType}/${movieId}`);
   };
 
   return (
@@ -212,9 +217,9 @@ const Slider = ({ cate, data, title }: iSlider) => {
                     onBoxClicked(movie.id, cate);
                   }}
                 >
-                  {movie.title}
+                  {movie.title || movie.name}
                   <Info variants={InfoVariants}>
-                    <h4>{movie.title}</h4>
+                    <h4>{movie.title || movie.name}</h4>
                   </Info>
                 </Box>
               ))}
@@ -222,7 +227,7 @@ const Slider = ({ cate, data, title }: iSlider) => {
         </AnimatePresence>
       </Slide>
 
-      <Detail data={clickedData as iGetMovieResult} />
+      <Detail data={clickedData as iGetMovieResult} urlType={urlType} />
     </>
   );
 };
