@@ -1,10 +1,8 @@
 import { AnimatePresence, motion, useViewportScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import {
-  useLocation,
   useMatch,
   useNavigate,
-  useParams,
 } from "react-router-dom";
 import styled from "styled-components";
 import { iGetMovieResult, iMovie } from "../api";
