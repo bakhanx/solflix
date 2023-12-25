@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
-import { getMovies, getTv, iGetMovieResult, iGetTvResult } from "../api";
+import { getMovies, getTv, iGetMovieResult } from "../api";
 import { makeImagePath } from "../utils";
 
 // ================================================
@@ -77,8 +77,7 @@ const MovieBtn = styled.button<{ color: string }>`
   border-top: 1px solid;
   border-top-left-radius: 5px;
 `;
-const TvBtn = styled(MovieBtn)`
-`;
+const TvBtn = styled(MovieBtn)``;
 const NoResult = styled.div`
   font-size: 36px;
 `;
@@ -104,7 +103,7 @@ const Search = () => {
     data: data_tv,
     isLoading: data_tv_isLoading,
     refetch: refetch_tv,
-  } = useQuery<iGetTvResult>(["tv", "searchTv"], async () => getTv(keyword));
+  } = useQuery<iGetMovieResult>(["tv", "searchTv"], async () => getTv(keyword));
 
   const [isMovie, setIsMovie] = useState(true);
 
@@ -144,10 +143,14 @@ const Search = () => {
 
           <hr />
           <Results>
-            {(isMovie ? data_movie?.total_results : data_tv?.total_results) === 0 ? <NoResult>{`No Results :(`}</NoResult> : ""}
+            {(isMovie ? data_movie?.total_results : data_tv?.total_results) ===
+            0 ? (
+              <NoResult>{`No Results :(`}</NoResult>
+            ) : (
+              ""
+            )}
             {(isMovie ? data_movie : data_tv)?.results.map((data) => (
               <div key={data.id}>
-
                 <Row>
                   <Poster
                     bg={makeImagePath(
@@ -159,12 +162,14 @@ const Search = () => {
                   <Content>
                     <Detail>
                       <Popularity>{`💕 popularity : ${data.popularity}`}</Popularity>
-                      <Release>{`🎬 Release Date : ${data.release_date || "unknown"}`}</Release>
+                      <Release>{`🎬 Release Date : ${
+                        data.release_date || data.first_air_date ||"unknown"
+                      }`}</Release>
                     </Detail>
 
                     <Title>{isMovie ? data?.title : data?.name}</Title>
                     <Overview>
-                      {data.overview ? data.overview : "Coming soon..."}
+                      {data.overview ? data.overview : "No data"}
                     </Overview>
                   </Content>
                 </Row>
