@@ -69,29 +69,29 @@ const Home = () => {
       ) : (
         <>
           {/* Banner */}
-          <Banner data={data_now_playing as iGetMovieResult} />
+          <Banner data={data_now_playing as iGetMovieResult} urlType={"movies"}/>
 
           {/* Slider */}
           <Slider
             cate={CATEGORY.UPCOMING}
             data={data_upcoming as iGetMovieResult}
             title={"Upcomming"}
+            urlType="movies"
           />
 
           <Slider
             cate={CATEGORY.TOP_RATED}
             data={data_top_rated as iGetMovieResult}
             title={"Top Rated"}
+            urlType="movies"
           />
 
           <Slider
             cate={CATEGORY.POPULAR}
             data={data_popular as iGetMovieResult}
             title={"Popular"}
+            urlType="movies"
           />
-        
-
-          {/* Modal */}
         </>
       )}
     </Wrapper>
