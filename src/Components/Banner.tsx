@@ -63,7 +63,7 @@ const Banner = ({ data, urlType }: iBanner) => {
         <Overview>{data?.results[0].overview}</Overview>
       </Container>
 
-      <Detail data={clickedData as iGetMovieResult} urlType={urlType} />
+      <Detail data={clickedData as iGetMovieResult} urlType={urlType} cate={"banner"}/>
     </>
   );
 };

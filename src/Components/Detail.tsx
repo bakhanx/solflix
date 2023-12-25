@@ -4,6 +4,7 @@ import { useNavigate, useMatch } from "react-router-dom";
 import styled from "styled-components";
 import { iGetMovieResult } from "../api";
 import { makeImagePath } from "../utils";
+import { CATEGORY } from "../Routes/Home";
 
 export const BigMovie = styled(motion.div)<{ scrolly: number }>`
   position: absolute;
@@ -59,22 +60,22 @@ export const Overlay = styled(motion.div)`
 interface iDetail {
   data: iGetMovieResult;
   urlType: "movies" | "tvs";
+  cate: CATEGORY | "banner";
 }
-const Detail = ({ data, urlType }: iDetail) => {
+const Detail = ({ data, urlType, cate }: iDetail) => {
   const bigMovieMatch = useMatch(`/${urlType}/:movieId`);
   const navigate = useNavigate();
   const { scrollY } = useViewportScroll();
-
   const onOverlayClick = () => {
-    if(urlType==="movies"){
+    if (urlType === "movies") {
       navigate("/");
-    } else if(urlType==="tvs"){
-      navigate("/tvs")
+    } else if (urlType === "tvs") {
+      navigate("/tvs");
     }
-     
-  }
-  const [clickedMovie, setClickedMovie] = useState<iGetMovieResult>(data);
-  //   const [clickedData, setClickedData] = useState<iGetMovieResult | iMovie>();
+  };
+  const [clickedMovie, setClickedMovie] = useState<iGetMovieResult | null>(
+    data
+  );
 
   useEffect(() => {
     const findMovie =
@@ -85,7 +86,7 @@ const Detail = ({ data, urlType }: iDetail) => {
           )
         : data);
     setClickedMovie(findMovie as any);
-  }, [bigMovieMatch, clickedMovie, data]);
+  }, [bigMovieMatch, clickedMovie, data, cate]);
 
   return (
     <AnimatePresence>
@@ -97,7 +98,7 @@ const Detail = ({ data, urlType }: iDetail) => {
             exit={{ opacity: 0 }}
           />
           <BigMovie
-            layoutId={bigMovieMatch.params.movieId}
+            layoutId={cate + "_" + bigMovieMatch.params.movieId}
             scrolly={scrollY.get()}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 0, transition: { duration: 0.5 } }}

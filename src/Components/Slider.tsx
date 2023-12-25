@@ -1,8 +1,6 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import {
-  useNavigate,
-} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { iGetMovieResult, iMovie } from "../api";
 import { makeImagePath_backdrop } from "../utils";
@@ -218,8 +216,12 @@ const Slider = ({ cate, data, title, urlType }: iSlider) => {
           </Row>
         </AnimatePresence>
       </Slide>
-
-      <Detail data={clickedData as iGetMovieResult} urlType={urlType} />
+                  
+      <Detail
+        data={clickedData as iGetMovieResult}
+        urlType={urlType}
+        cate={cate}
+      />
     </>
   );
 };
