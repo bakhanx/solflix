@@ -5,6 +5,8 @@ import { CATEGORY } from "../Routes/Home";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import Detail from "./Detail";
+import { useSetRecoilState } from "recoil";
+import { onOffOverlay } from "../atom";
 
 export const Container = styled.div<{ bgphoto: string }>`
   height: 100vh;
@@ -57,9 +59,10 @@ interface iBanner {
 const Banner = ({ data, urlType }: iBanner) => {
   const navigate = useNavigate();
   const [clickedData, setClickedData] = useState<iGetMovieResult>();
-
+  const setIsOnOverlay = useSetRecoilState(onOffOverlay);
   const onBoxClicked = (movieId: number | string, cate: CATEGORY) => {
     setClickedData(data);
+    setIsOnOverlay("BANNER");
     navigate(`/${urlType}/${movieId}`);
   };
 
@@ -82,7 +85,7 @@ const Banner = ({ data, urlType }: iBanner) => {
       <Detail
         data={clickedData as iGetMovieResult}
         urlType={urlType}
-        cate={"banner"}
+        cate={"BANNER"}
       />
     </>
   );
