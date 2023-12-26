@@ -5,8 +5,10 @@ import styled from "styled-components";
 import { iGetMovieResult } from "../api";
 import { makeImagePath } from "../utils";
 import { CATEGORY } from "../Routes/Home";
+import { useRecoilState } from "recoil";
+import { onOffOverlay } from "../atom";
 
-export const BigMovie = styled(motion.div)<{scrolly: number}>`
+export const BigMovie = styled(motion.div)<{ scrolly: number }>`
   position: absolute;
   width: 40vw;
   height: 80vh;
@@ -96,17 +98,20 @@ export const Overlay = styled(motion.div)`
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   opacity: 0;
+  z-index:15;
 `;
 
 interface iDetail {
   data: iGetMovieResult;
   urlType: "movies" | "tvs";
-  cate: CATEGORY | "banner";
+  cate: CATEGORY | "BANNER";
 }
 const Detail = ({ data, urlType, cate }: iDetail) => {
   const bigMovieMatch = useMatch(`/${urlType}/:movieId`);
   const navigate = useNavigate();
   const { scrollY } = useViewportScroll();
+  const isOnOverlay = useRecoilState(onOffOverlay);
+
   const onOverlayClick = () => {
     if (urlType === "movies") {
       navigate("/");
@@ -117,7 +122,6 @@ const Detail = ({ data, urlType, cate }: iDetail) => {
   const [clickedMovie, setClickedMovie] = useState<iGetMovieResult | null>(
     data
   );
-
   useEffect(() => {
     const findMovie =
       bigMovieMatch?.params.movieId &&
@@ -131,7 +135,7 @@ const Detail = ({ data, urlType, cate }: iDetail) => {
 
   return (
     <AnimatePresence>
-      {bigMovieMatch && clickedMovie ? (
+      {bigMovieMatch?.params.movieId && clickedMovie && isOnOverlay ? (
         <>
           <Overlay
             onClick={onOverlayClick}
@@ -139,7 +143,7 @@ const Detail = ({ data, urlType, cate }: iDetail) => {
             exit={{ opacity: 0 }}
           />
           <BigMovie
-            layoutId={cate + "_" + bigMovieMatch.params.movieId}
+            layoutId={isOnOverlay + bigMovieMatch.params.movieId}
             scrolly={scrollY.get()}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0, scale: 0, transition: { duration: 0.5 } }}
