@@ -26,7 +26,7 @@ export const Title = styled.h2`
     font-size: 48px;
   }
   @media screen and (max-width: 480px) {
-    font-size: 36px;
+    font-size: 32px;
   }
 
   margin-bottom: 20px;
@@ -44,7 +44,7 @@ export const Overview = styled.p`
     width: 80%;
   }
   @media screen and (max-width: 480px) {
-    font-size: 20px;
+    font-size: 16px;
     width: 80%;
   }
 
