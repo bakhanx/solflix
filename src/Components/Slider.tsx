@@ -6,8 +6,8 @@ import { iGetMovieResult, iMovie } from "../api";
 import { makeImagePath_backdrop } from "../utils";
 import { CATEGORY } from "../Routes/Home";
 import Detail from "./Detail";
-import { useRecoilValue } from "recoil";
-import { slideOffset } from "../atom";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { onOffOverlay, slideOffset } from "../atom";
 
 // const OFFSET = 6;
 
@@ -32,12 +32,11 @@ export const BtnWrapper = styled.div`
   justify-content: space-between;
   height: 200px;
   width: 100%;
-  /* z-index: 1000; */
 `;
 export const SlideBtn = styled.button`
   font-size: 36px;
   height: 80%;
-  z-index: 1000;
+  z-index: 5;
   color: #dfdfdfdc;
   background-color: rgba(0, 0, 0, 0.1);
   border-style: none;
@@ -151,6 +150,7 @@ const Slider = ({ cate, data, title, urlType }: iSlider) => {
   const [isIncrease, setIsIncrease] = useState<boolean>(true);
   const [leaving, setLeaving] = useState<boolean>(false);
   const [clickedData, setClickedData] = useState<iGetMovieResult | iMovie>();
+  const [category, setCategory] = useState("");
 
   const navigate = useNavigate();
   const toggleLeaving = () => setLeaving((prev) => !prev);
@@ -159,6 +159,8 @@ const Slider = ({ cate, data, title, urlType }: iSlider) => {
   const [maxIndex, setMaxIndex] = useState(0);
   const OFFSET = useRecoilValue(slideOffset);
 
+  const setIsOnOverlay = useSetRecoilState(onOffOverlay);
+
   useEffect(() => {
     if (data && data?.results) {
       setTotalMovies(data?.results.length - 1);
@@ -166,7 +168,7 @@ const Slider = ({ cate, data, title, urlType }: iSlider) => {
     }
   }, [data, totalMovies, OFFSET]);
 
-  const increaseIndex = (cate: CATEGORY) => {
+  const increaseIndex = () => {
     //연속 버튼 방지
     setIsIncrease(true);
     if (leaving) return;
@@ -174,7 +176,7 @@ const Slider = ({ cate, data, title, urlType }: iSlider) => {
     setIndex((prev) => (index === maxIndex ? 0 : prev + 1));
   };
 
-  const decreaseIndex = (cate: CATEGORY) => {
+  const decreaseIndex = () => {
     //연속 버튼 방지
     setIsIncrease(false);
     if (leaving) return;
@@ -185,67 +187,71 @@ const Slider = ({ cate, data, title, urlType }: iSlider) => {
   const onBoxClicked = (movieId: number | string, cate: CATEGORY) => {
     // setCategory(cate);
     setClickedData(data);
+    setIsOnOverlay(cate);
     navigate(`/${urlType}/${movieId}`);
   };
-
   return (
     <>
-      <Slide>
-        <Filter key={cate}>{title}</Filter>
+      {data && (
+        <>
+          <Slide>
+            <Filter key={cate}>{title}</Filter>
 
-        <BtnWrapper>
-          <SlideBtn onClick={() => decreaseIndex(cate)}>{`<`}</SlideBtn>
-          <SlideBtn onClick={() => increaseIndex(cate)}>{`>`}</SlideBtn>
-        </BtnWrapper>
+            <BtnWrapper>
+              <SlideBtn onClick={decreaseIndex}>{`<`}</SlideBtn>
+              <SlideBtn onClick={increaseIndex}>{`>`}</SlideBtn>
+            </BtnWrapper>
 
-        <AnimatePresence
-          initial={false}
-          onExitComplete={toggleLeaving}
-          custom={isIncrease}
-        >
-          <Row
-            key={index}
-            variants={RowVariants}
-            initial={"hidden"}
-            animate="visible"
-            exit={"exit"}
-            transition={{ type: "tween", duration: 1 }}
-            custom={isIncrease}
-            offset={OFFSET}
-          >
-            {data?.results
-              .slice(index * OFFSET, index * OFFSET + OFFSET)
-              .map((movie) => (
-                <Box
-                  key={movie.id}
-                  layoutId={cate + "_" + movie.id}
-                  initial="normal"
-                  whileHover="hover"
-                  variants={BoxVariants}
-                  transition={{ type: "tween" }}
-                  bg_photo={makeImagePath_backdrop(
-                    movie.backdrop_path || "",
-                    "w500"
-                  )}
-                  onClick={() => {
-                    onBoxClicked(movie.id, cate);
-                  }}
-                >
-                  <div>{movie.title || movie.name}</div>
-                  <Info variants={InfoVariants}>
-                    <p>{movie.release_date || movie.first_air_date}</p>
-                  </Info>
-                </Box>
-              ))}
-          </Row>
-        </AnimatePresence>
-      </Slide>
+            <AnimatePresence
+              initial={false}
+              onExitComplete={toggleLeaving}
+              custom={isIncrease}
+            >
+              <Row
+                key={index}
+                variants={RowVariants}
+                initial={"hidden"}
+                animate="visible"
+                exit={"exit"}
+                transition={{ type: "tween", duration: 1 }}
+                custom={isIncrease}
+                offset={OFFSET}
+              >
+                {data?.results
+                  .slice(index * OFFSET, index * OFFSET + OFFSET)
+                  .map((movie) => (
+                    <Box
+                      key={cate + movie.id}
+                      layoutId={cate + String(movie.id)}
+                      initial="normal"
+                      whileHover="hover"
+                      variants={BoxVariants}
+                      transition={{ type: "tween" }}
+                      bg_photo={makeImagePath_backdrop(
+                        movie.backdrop_path || "",
+                        "w500"
+                      )}
+                      onClick={() => {
+                        onBoxClicked(movie.id, cate);
+                      }}
+                    >
+                      <div>{movie.title || movie.name}</div>
+                      <Info variants={InfoVariants}>
+                        <p>{movie.release_date || movie.first_air_date}</p>
+                      </Info>
+                    </Box>
+                  ))}
+              </Row>
+            </AnimatePresence>
+          </Slide>
 
-      <Detail
-        data={clickedData as iGetMovieResult}
-        urlType={urlType}
-        cate={cate}
-      />
+          <Detail
+            data={clickedData as iGetMovieResult}
+            urlType={urlType}
+            cate={cate}
+          />
+        </>
+      )}
     </>
   );
 };
