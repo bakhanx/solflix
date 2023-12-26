@@ -10,6 +10,11 @@ export const windowHeight = atom({
   default: window.innerHeight,
 });
 
+export const onOffOverlay = atom({
+  key: "onOffOverlay",
+  default: "",
+});
+
 export const slideOffset = selector({
   key: "slideOffset",
   get: ({ get }) => {
