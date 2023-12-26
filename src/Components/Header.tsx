@@ -14,23 +14,28 @@ const Nav = styled(motion.nav)`
   justify-content: space-between;
   align-items: center;
   position: fixed;
-  z-index: 9999;
+  z-index: 10;
   width: 100vw;
   top: 0;
   background-color: black; // ✔ change it as red !
   font-size: 16px;
-  padding: 20px 60px;
+  padding: 20px 30px;
   color: white;
-  box-sizing: border-box; // 🎈 Catch overflow by width:100% & padding
+  box-sizing: border-box; // 🎈 Catch overflow by width:100% &
 `;
 const Col = styled.div`
   display: flex;
   align-items: center;
 `;
-const LogoWrapper = styled.div`
-  margin-right: 50px;
-`;
+const LogoWrapper = styled.div``;
 const Logo = styled.div`
+  margin-right: 50px;
+  @media screen and (max-width: 480px) {
+    margin-right: 30px;
+    width: 96px;
+    height: 36px;
+    background-size: 96px 36px;
+  }
   width: 130px;
   height: 40px;
   background: url(${LogoImg});
@@ -69,6 +74,7 @@ const Circle = styled(motion.span)`
   margin: 0 auto;
 `;
 const Search = styled.form`
+  z-index: 15;
   color: white;
   display: flex;
   align-items: center;
@@ -81,35 +87,44 @@ const Search = styled.form`
     transform: scale(1.2);
     transition: 0.1s ease;
   }
+  &:focus-within{
+    transform: scale(1.2);
+  }
+  @media screen and (max-width: 768px) {
+    /* right:20px; */
+  }
 `;
 const Input = styled(motion.input)`
+  @media screen and (max-width: 768px) {
+  }
   transform-origin: right center;
   position: absolute;
   left: -220px;
   right: 0;
-  padding: 5px 10px;
+  padding: 10px 10px;
   padding-left: 40px;
   z-index: -1;
   color: white;
   font-size: 16px;
-  background-color: transparent;
+  background-color: black;
+  
   border: 1px solid ${(props) => props.theme.white.lighter};
 `;
 
 // ================================================
 //              Variants
 // ================================================
-const logoVariants = {
-  normal: {
-    fillOpacity: 1,
-  },
-  active: {
-    fillOpacity: [0, 1, 0],
-    transition: {
-      repeat: Infinity,
-    },
-  },
-};
+// const logoVariants = {
+//   normal: {
+//     fillOpacity: 1,
+//   },
+//   active: {
+//     fillOpacity: [0, 1, 0],
+//     transition: {
+//       repeat: Infinity,
+//     },
+//   },
+// };
 const navVariants = {
   top: { backgroundColor: "rgba(0,0,0,0)" },
   scroll: { backgroundColor: "rgba(0,0,0,1)" },
@@ -179,13 +194,13 @@ const Header = () => {
           <Item>
             <Link to="/">
               Home
-              {homeMatch ? <Circle layoutId="circle"/> : null}
+              {homeMatch ? <Circle layoutId="circle" /> : null}
             </Link>
           </Item>
           <Item>
             <Link to="/tvs">
-              Tv Shows
-              {tvMatch ? <Circle layoutId="circle"/> : null}
+              Tv
+              {tvMatch ? <Circle layoutId="circle" /> : null}
             </Link>
           </Item>
         </Items>
@@ -211,7 +226,7 @@ const Header = () => {
             animate={inputAnimation}
             initial={{ scaleX: 0 }}
             transition={{ type: "linear" }}
-            placeholder="Saerch for movie and show"
+            placeholder="Search for movie and tv"
           ></Input>
         </Search>
       </Col>

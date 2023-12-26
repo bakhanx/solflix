@@ -6,8 +6,10 @@ import { iGetMovieResult, iMovie } from "../api";
 import { makeImagePath_backdrop } from "../utils";
 import { CATEGORY } from "../Routes/Home";
 import Detail from "./Detail";
+import { useRecoilValue } from "recoil";
+import { slideOffset } from "../atom";
 
-const OFFSET = 6;
+// const OFFSET = 6;
 
 export const Slide = styled.div`
   position: relative;
@@ -19,6 +21,9 @@ export const Slide = styled.div`
 export const Filter = styled.div`
   font-size: 36px;
   padding-bottom: 15px;
+  @media screen and (max-width: 768px) {
+    font-size: 28px;
+  }
 `;
 export const BtnWrapper = styled.div`
   position: absolute;
@@ -30,7 +35,7 @@ export const BtnWrapper = styled.div`
   /* z-index: 1000; */
 `;
 export const SlideBtn = styled.button`
-  font-size: 30px;
+  font-size: 36px;
   height: 80%;
   z-index: 1000;
   color: #dfdfdfdc;
@@ -41,18 +46,21 @@ export const SlideBtn = styled.button`
     color: white;
     scale: 1.5;
   }
+  @media screen and (max-width: 768px) {
+    font-size: 28px;
+  }
 `;
-export const Row = styled(motion.div)`
+export const Row = styled(motion.div)<{ offset: number }>`
   display: grid;
   gap: 5px;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(${(props) => props.offset}, 1fr);
   position: absolute;
   width: 100%;
 `;
 export const Box = styled(motion.div)<{ bg_photo: string }>`
   background-color: white;
   height: 200px;
-
+  padding : 5px;
   color: white;
   font-size: 20px;
   background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
@@ -71,6 +79,9 @@ export const Box = styled(motion.div)<{ bg_photo: string }>`
     cursor: pointer;
     color: red;
   }
+  @media screen and (max-width: 768px) {
+    font-size: 16px;
+  }
 `;
 export const Info = styled(motion.div)`
   padding: 10px;
@@ -79,8 +90,13 @@ export const Info = styled(motion.div)`
   position: absolute;
   width: 100%;
   bottom: 0;
-  h4 {
-    text-align: center;
+  font-size:  16px;
+  text-align: center;
+
+  @media screen and (max-width: 768px) {
+
+      font-size: 12px;
+
   }
 `;
 // ============== Variants ====================
@@ -135,13 +151,14 @@ const Slider = ({ cate, data, title, urlType }: iSlider) => {
   // count Total Movies
   const [totalMovies, setTotalMovies] = useState(0);
   const [maxIndex, setMaxIndex] = useState(0);
+  const OFFSET = useRecoilValue(slideOffset);
 
   useEffect(() => {
     if (data && data?.results) {
       setTotalMovies(data?.results.length - 1);
       setMaxIndex(Math.floor(totalMovies / OFFSET) - 1);
     }
-  }, [data, totalMovies]);
+  }, [data, totalMovies, OFFSET]);
 
   const increaseIndex = (cate: CATEGORY) => {
     //연속 버튼 방지
@@ -186,8 +203,9 @@ const Slider = ({ cate, data, title, urlType }: iSlider) => {
             initial={"hidden"}
             animate="visible"
             exit={"exit"}
-            transition={{ type: "tween", duration: 2 }}
+            transition={{ type: "tween", duration: 1 }}
             custom={isIncrease}
+            offset={OFFSET}
           >
             {data?.results
               .slice(index * OFFSET, index * OFFSET + OFFSET)
@@ -209,14 +227,14 @@ const Slider = ({ cate, data, title, urlType }: iSlider) => {
                 >
                   {movie.title || movie.name}
                   <Info variants={InfoVariants}>
-                    <h4>{movie.title || movie.name}</h4>
+                    {movie.release_date || movie.first_air_date}
                   </Info>
                 </Box>
               ))}
           </Row>
         </AnimatePresence>
       </Slide>
-                  
+
       <Detail
         data={clickedData as iGetMovieResult}
         urlType={urlType}

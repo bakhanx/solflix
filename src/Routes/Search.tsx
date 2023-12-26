@@ -10,20 +10,31 @@ import { makeImagePath } from "../utils";
 // ================================================
 const Wrapper = styled.div`
   background-color: black;
-  padding: 60px;
+  padding: 30px;
+  @media screen and (max-width: 768px) {
+    padding: 15px;
+  }
 `;
 const KeyWord = styled.div`
   margin-top: 200px;
   font-size: 48px;
   margin-bottom: 20px;
+  @media screen and (max-width: 1024px) {
+    font-size: 36px;
+  }
+  @media screen and (max-width: 768px) {
+    font-size: 28px;
+  }
 `;
 const Results = styled.div`
   padding: 30px;
   height: 100vh;
+  @media screen and (max-width: 768px) {
+    padding: 5px;
+  }
 `;
 const Row = styled.div`
   width: 100vw;
-  height: 240px;
   display: flex;
   margin-top: 30px;
   margin-bottom: 30px;
@@ -40,20 +51,50 @@ const Content = styled.div`
   margin-left: 30px;
   width: 100vw;
   height: 240px;
+  overflow: scroll;
+  @media screen and (max-width: 768px) {
+    margin-left: 15px;
+  }
 `;
 const Title = styled.div`
   font-size: 36px;
-  padding: 10px;
+  padding-top: 10px;
+  padding-right: 30px;
+  @media screen and (max-width: 1024px) {
+    font-size: 28px;
+  }
+  @media screen and (max-width: 768px) {
+    font-size: 24px;
+  }
+  @media screen and (max-width: 480px) {
+    font-size: 18px;
+  }
 `;
 const Overview = styled.div`
   font-size: 18px;
-  padding: 10px;
-  width: 60vw;
+  padding-top: 10px;
+  padding-right: 120px;
+  /* width: 80vw; */
+  @media screen and (max-width: 1024px) {
+    font-size: 16px;
+    padding-right: 60px;
+  }
+  @media screen and (max-width: 480px) {
+    font-size: 12px;
+    padding-right: 60px;
+  }
 `;
 const Detail = styled.div`
-  width: 60vw;
+  padding-right: 120px;
   display: flex;
   justify-content: space-between;
+  @media screen and (max-width: 768px) {
+    p {
+      font-size: 12px;
+    }
+    flex-direction: column;
+    padding-right: 60px;
+  }
 `;
 const Release = styled.p`
   font-size: 16px;
@@ -120,7 +161,7 @@ const Search = () => {
     } else if (!isMovie) {
       refetch_tv();
     }
-  }, [keyword, isMovie]);
+  }, [keyword, isMovie, refetch_movie, refetch_tv]);
 
   return (
     <Wrapper>
@@ -163,7 +204,7 @@ const Search = () => {
                     <Detail>
                       <Popularity>{`💕 popularity : ${data.popularity}`}</Popularity>
                       <Release>{`🎬 Release Date : ${
-                        data.release_date || data.first_air_date ||"unknown"
+                        data.release_date || data.first_air_date || "unknown"
                       }`}</Release>
                     </Detail>
 

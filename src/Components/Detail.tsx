@@ -16,37 +16,61 @@ export const BigMovie = styled(motion.div)<{ scrolly: number }>`
   top: ${(props) => props.scrolly + 100}px;
   background-color: ${(props) => props.theme.black.lighter};
   border-radius: 15px;
-  overflow: hidden;
+  
   z-index: 50;
+  @media screen and (max-width: 1024px) {
+    width: 80vw;
+  }
 `;
 export const BigCover = styled.div`
   width: 100%;
   background-size: cover;
   background-position: center;
   height: 400px;
-`;
-export const BigContent = styled.div`
-  color: ${(props) => props.theme.white.lighter};
-  position: relative;
-  top: -80px;
+  display: flex;
+  align-items: end;
+  @media screen and (max-width: 1024px) {
+    height: 300px;
+  }
+  border-radius: 15px 15px 0px 0px;
 `;
 export const BigTitle = styled.h3`
   font-size: 36px;
   padding: 20px;
+  @media screen and (max-width: 1024px) {
+    font-size: 24px;
+  }
+`;
+export const BigContent = styled.div`
+  color: ${(props) => props.theme.white.lighter};
+  position: relative;
+  
+`;
+export const BigDetail = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
 `;
 export const BigRelease = styled.p`
-  font-size: 20px;
-  padding: 20px;
+  font-size: 16px;
+  @media screen and (max-width: 1024px) {
+    font-size: 12px;
+  }
 `;
-export const BigDetail = styled.p`
-  font-size: 20px;
-  padding-left: 20px;
+export const BigPopular = styled.p`
+  font-size: 12px;
 `;
 export const BigOverview = styled.p`
   font-size: 18px;
-  margin-top: 20px;
   padding: 20px;
   border-top: 1px solid gray;
+  height: 200px;
+  overflow: scroll;
+  @media screen and (max-width: 1024px) {
+    font-size: 16px;
+    height: 300px;
+  }
+  
 `;
 export const Overlay = styled(motion.div)`
   position: fixed;
@@ -113,11 +137,16 @@ const Detail = ({ data, urlType, cate }: iDetail) => {
                       "w500"
                     )})`,
                   }}
-                />
-                <BigContent>
+                >
                   <BigTitle>{clickedMovie.title || clickedMovie.name}</BigTitle>
-                  <BigRelease>{`🎬 Release Date : ${clickedMovie.release_date}`}</BigRelease>
-                  <BigDetail>{`💕 popularity : ${clickedMovie.popularity}`}</BigDetail>
+                </BigCover>
+                <BigContent>
+                  <BigDetail>
+                    <BigRelease>{`🎬 Release Date : ${
+                      clickedMovie.release_date || clickedMovie.first_air_date
+                    }`}</BigRelease>
+                    <BigPopular>{`💕 popularity : ${clickedMovie.popularity}`}</BigPopular>
+                  </BigDetail>
                   <BigOverview>
                     {clickedMovie.overview !== ""
                       ? clickedMovie.overview

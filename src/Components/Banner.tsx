@@ -11,7 +11,7 @@ export const Container = styled.div<{ bgphoto: string }>`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  padding: 60px;
+  padding: 30px;
   background-image: linear-gradient(
       rgba(0, 0, 0, 1),
       rgba(0, 0, 0, 0.3),
@@ -21,7 +21,14 @@ export const Container = styled.div<{ bgphoto: string }>`
   background-size: cover;
 `;
 export const Title = styled.h2`
-  font-size: 58px;
+  font-size: 60px;
+  @media screen and (max-width: 768px) {
+    font-size: 48px;
+  }
+  @media screen and (max-width: 480px) {
+    font-size: 36px;
+  }
+
   margin-bottom: 20px;
   &:hover {
     cursor: pointer;
@@ -32,6 +39,15 @@ export const Title = styled.h2`
 export const Overview = styled.p`
   font-size: 28px;
   width: 50%;
+  @media screen and (max-width: 768px) {
+    font-size: 24px;
+    width: 80%;
+  }
+  @media screen and (max-width: 480px) {
+    font-size: 20px;
+    width: 80%;
+  }
+
 `;
 interface iBanner {
   data: iGetMovieResult;
@@ -63,7 +79,11 @@ const Banner = ({ data, urlType }: iBanner) => {
         <Overview>{data?.results[0].overview}</Overview>
       </Container>
 
-      <Detail data={clickedData as iGetMovieResult} urlType={urlType} cate={"banner"}/>
+      <Detail
+        data={clickedData as iGetMovieResult}
+        urlType={urlType}
+        cate={"banner"}
+      />
     </>
   );
 };
