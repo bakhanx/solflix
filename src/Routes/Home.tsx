@@ -1,13 +1,11 @@
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import {
-  getMovies_latest,
   getMovies_now_playing,
   getMovies_popular,
   getMovies_top_rated,
   getMovies_upcoming,
   iGetMovieResult,
-  iMovie,
 } from "../api";
 import Slider from "../Components/Slider";
 
@@ -17,14 +15,14 @@ import Banner from "../Components/Banner";
 //               Constant
 // ================================================
 export const enum CATEGORY {
-  "LATEST" = "LATEST",
-  "TOP_RATED" = "TOP_RATED",
-  "UPCOMING" = "UPCOMING",
-  "NOW_PLAYING" = "NOW_PLAYING",
-  "POPULAR" = "POPULAR",
+  LATEST = "LATEST",
+  TOP_RATED = "TOP_RATED",
+  UPCOMING = "UPCOMING",
+  NOW_PLAYING = "NOW_PLAYING",
+  POPULAR = "POPULAR",
 
-  "AIRING_TODAY" = "AIRING_TODAY",
-  "ON_THE_AIR" = "ON_THE_AIR",
+  AIRING_TODAY = "AIRING_TODAY",
+  ON_THE_AIR = "ON_THE_AIR",
 }
 
 // ================================================
@@ -46,10 +44,10 @@ export const Loader = styled.div`
 // ================================================
 
 const Home = () => {
-  const { data: data_latest, isLoading: isloading_latest } = useQuery<iMovie>(
-    ["movies", "latest"],
-    getMovies_latest
-  );
+  // const { data: data_latest, isLoading: isloading_latest } = useQuery<iMovie>(
+  //   ["movies", "latest"],
+  //   getMovies_latest
+  // );
 
   const { data: data_top_rated, isLoading: isloading_top_rated } =
     useQuery<iGetMovieResult>(["movies", "topRated"], getMovies_top_rated);
@@ -91,6 +89,7 @@ const Home = () => {
             data={data_top_rated as iGetMovieResult}
             title={"Top Rated"}
             urlType="movies"
+            
           />
           <Slider
             cate={CATEGORY.POPULAR}
