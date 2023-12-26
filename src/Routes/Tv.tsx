@@ -1,22 +1,18 @@
 import { useQuery } from "react-query";
 import {
   getTv_airing_today,
-  getTv_latest,
   getTv_on_the_air,
   getTv_popular,
   getTv_top_rated,
   iGetMovieResult,
-  iMovie,
 } from "../api";
 import { CATEGORY, Loader, Wrapper } from "./Home";
-import Detail from "../Components/Detail";
 import Banner from "../Components/Banner";
 import Slider from "../Components/Slider";
 
 // ================================================
 //                Const
 // ================================================
-const OFFSET = 6;
 
 // ================================================
 //                Component
@@ -35,10 +31,10 @@ const Tv = () => {
   const { data: data_top_rated, isLoading: isLoading_top_rated } =
     useQuery<iGetMovieResult>(["tv", "top_rate"], getTv_top_rated);
 
-  const { data: data_latest, isLoading: isLoading_latest } = useQuery<iMovie>(
-    ["tv", "latest"],
-    getTv_latest
-  );
+  // const { data: data_latest, isLoading: isLoading_latest } = useQuery<iMovie>(
+  //   ["tv", "latest"],
+  //   getTv_latest
+  // );
 
   const { data: data_on_the_air, isLoading: isLoading_on_the_air } =
     useQuery<iGetMovieResult>(["tv", "on_the_air"], getTv_on_the_air);
