@@ -6,7 +6,7 @@ import { iGetMovieResult } from "../api";
 import { makeImagePath } from "../utils";
 import { CATEGORY } from "../Routes/Home";
 
-export const BigMovie = styled(motion.div)<{ scrolly: number }>`
+export const BigMovie = styled(motion.div)<{scrolly: number}>`
   position: absolute;
   width: 40vw;
   height: 80vh;
@@ -16,10 +16,13 @@ export const BigMovie = styled(motion.div)<{ scrolly: number }>`
   top: ${(props) => props.scrolly + 100}px;
   background-color: ${(props) => props.theme.black.lighter};
   border-radius: 15px;
-  
+
   z-index: 50;
   @media screen and (max-width: 1024px) {
-    width: 80vw;
+    width: 60vw;
+  }
+  @media screen and (max-width: 480px) {
+    height: 70vh;
   }
 `;
 export const BigCover = styled.div`
@@ -44,7 +47,6 @@ export const BigTitle = styled.h3`
 export const BigContent = styled.div`
   color: ${(props) => props.theme.white.lighter};
   position: relative;
-  
 `;
 export const BigDetail = styled.div`
   display: flex;
@@ -58,19 +60,34 @@ export const BigRelease = styled.p`
   }
 `;
 export const BigPopular = styled.p`
-  font-size: 12px;
+  font-size: 16px;
+  @media screen and (max-width: 1024px) {
+    font-size: 12px;
+  }
 `;
 export const BigOverview = styled.p`
   font-size: 18px;
   padding: 20px;
   border-top: 1px solid gray;
-  height: 200px;
+  height: 100px;
   overflow: scroll;
+  scrollbar-width: none; //FireFox
+  -ms-overflow-style: none; // IE, Edge
+  ::-webkit-scrollbar {
+    // Chrome, Safari, Opera
+    display: none;
+    width: 0px;
+  }
+
   @media screen and (max-width: 1024px) {
     font-size: 16px;
     height: 300px;
   }
-  
+  @media screen and (max-width: 480px) {
+    font-size: 12px;
+    height: 100px;
+    padding: 10px;
+  }
 `;
 export const Overlay = styled(motion.div)`
   position: fixed;

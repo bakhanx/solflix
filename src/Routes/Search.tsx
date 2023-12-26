@@ -34,7 +34,7 @@ const Results = styled.div`
   }
 `;
 const Row = styled.div`
-  width: 100vw;
+  /* width: 100%; */
   display: flex;
   margin-top: 30px;
   margin-bottom: 30px;
@@ -52,6 +52,12 @@ const Content = styled.div`
   width: 100vw;
   height: 240px;
   overflow: scroll;
+  scrollbar-width: none; //FireFox
+  -ms-overflow-style: none; // IE, Edge
+  ::-webkit-scrollbar{ // Chrome, Safari, Opera
+    display: none;
+    width: 0px;
+  }
   @media screen and (max-width: 768px) {
     margin-left: 15px;
   }

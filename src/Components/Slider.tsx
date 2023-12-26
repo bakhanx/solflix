@@ -60,13 +60,15 @@ export const Row = styled(motion.div)<{ offset: number }>`
 export const Box = styled(motion.div)<{ bg_photo: string }>`
   background-color: white;
   height: 200px;
-  padding : 5px;
   color: white;
   font-size: 20px;
   background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
     url(${(props) => props.bg_photo});
   background-size: cover;
   background-position: center;
+  div {
+    padding: 5px;
+  }
   &:first-child {
     transform-origin: center left;
   }
@@ -82,21 +84,25 @@ export const Box = styled(motion.div)<{ bg_photo: string }>`
   @media screen and (max-width: 768px) {
     font-size: 16px;
   }
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 `;
 export const Info = styled(motion.div)`
-  padding: 10px;
   background-color: ${(props) => props.theme.black.lighter};
   opacity: 0;
-  position: absolute;
+  padding: 10px;
+  /* position: absolute; */
   width: 100%;
   bottom: 0;
-  font-size:  16px;
-  text-align: center;
+  font-size: 16px;
+
+  p {
+    text-align: center;
+  }
 
   @media screen and (max-width: 768px) {
-
-      font-size: 12px;
-
+    font-size: 12px;
   }
 `;
 // ============== Variants ====================
@@ -225,9 +231,9 @@ const Slider = ({ cate, data, title, urlType }: iSlider) => {
                     onBoxClicked(movie.id, cate);
                   }}
                 >
-                  {movie.title || movie.name}
+                  <div>{movie.title || movie.name}</div>
                   <Info variants={InfoVariants}>
-                    {movie.release_date || movie.first_air_date}
+                    <p>{movie.release_date || movie.first_air_date}</p>
                   </Info>
                 </Box>
               ))}
